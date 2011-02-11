@@ -18,7 +18,7 @@ Tower.prototype.init = function(pos) {
 	
 }
 
-Tower.prototype.update = function() {
+Tower.prototype.update = function(dt) {
 	
 	if(!this.is_placed) {
 		// drop on the ground 

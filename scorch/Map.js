@@ -9,9 +9,17 @@ function Map() {
 }
 
 Map.prototype.init = function(width, height) {
+	
+	var view_controller = EViewController.shared();
+	
 	this.width = width;
 	this.height = height;
+	
 	this.generateMap();
+	
+	view_controller.clear();
+	this.render();
+	this.map_image_data = view_controller.context.getImageData(0, 0, view_controller.size.width, view_controller.size.height);
 	
 	return this;
 }
