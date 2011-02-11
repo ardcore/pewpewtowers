@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<script type="text/javascript" src="einie/Einie.js"></script>
+		<script type="text/javascript" src="einie/EConfig.js"></script>
+		<script type="text/javascript" src="einie/EHelpers.js"></script>
+		<script type="text/javascript" src="einie/EViewController.js"></script>
+		<script type="text/javascript" src="einie/EGameController.js"></script>		
+		<script type="text/javascript" src="einie/ETexture.js"></script>
+		<script type="text/javascript" src="einie/ETexturesManager.js"></script>
+		<script type="text/javascript" src="einie/EImage.js"></script>
+		<script type="text/javascript" src="einie/ESpriteSheet.js"></script>
+		<script type="text/javascript" src="einie/EPackedSpriteSheet.js"></script>
+		<script type="text/javascript" src="einie/EScene.js"></script>
+		<script type="text/javascript" src="einie/ESceneLoader.js"></script>
+		
+		<script type="text/javascript" src="scorch/Explosion.js"></script>
+		<script type="text/javascript" src="scorch/Bullet.js"></script>
+		<script type="text/javascript" src="scorch/Tower.js"></script>
+		<script type="text/javascript" src="scorch/Map.js"></script>
+		<script type="text/javascript" src="scorch/GameScene.js"></script>
+		
+		<style>
+			body { font: 15px/1.5 helvetica, arial; }
+			h1 { width: 960px; margin: 0 auto; }
+			#Einie { margin: 40px auto; display: block; }
+			#fps-console { position: absolute; top: 65px; left: 50%; margin-left: 400px; }
+		</style>
+	</head>
+	<body>
+		<h1>scorch</h1>
+		<canvas id="Einie" width="960" height="480"></canvas>
+		<div id="fps-console"></div>
+		<script>
+			var einie = Einie.shared().startApp();
+		</script>
+	</body>
+</html>
