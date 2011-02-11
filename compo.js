@@ -1,14 +1,6 @@
-/**
- * wildcard / 2011-02-11 21:22:02
- */
-
-
 var scorch = (function(global, undefined) {
-
 	var canvas = document.getElementById("game");
-
 	return {
-
 		data: {
 			canvas: canvas,
 			ctx: canvas.getContext("2d"),
@@ -16,12 +8,10 @@ var scorch = (function(global, undefined) {
 			cheight: canvas.height,
 			offset: {x:null, y:null}
 		},
-
 		utils: {
 			rangeRand: function(min, max) {
 				return (Math.random() * (max - min) + +min);
 			},
-
 			DOMOffset: function(el) {
 				var curleft, curtop;
 				curleft = curtop = 0;
@@ -33,22 +23,20 @@ var scorch = (function(global, undefined) {
 				}
 				return [curleft,curtop];
 			},
-
 			posInCanvas: function(pos) {
 				return {
 					x: pos.x - scorch.data.offset.x,
 					y: pos.y - scorch.data.offset.y
 				}
 			}
-
 		}
 	}
-
 	var init = (function() {
-		this.data.ctx.fillStyle = "black";
-		var updater = new __.Updater().init(__.Scheduler.shared(), 10);
-	})();
+		Scorch.init();
 
+		// game logic goes here. or is called here.
+
+	})();
 })(this);
 
 
