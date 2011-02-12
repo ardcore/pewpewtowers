@@ -41,7 +41,7 @@ GameScene.prototype.init = function(players_count) {
 	}
 
 	// randomize starting player
-	this.setActivePlayer( this.getRandomPlayer() );
+	this.setActivePlayer(this.getRandomPlayer());
 	
 	// SUPER HACKY MOUSE SUPPORT
 	
@@ -66,7 +66,7 @@ GameScene.prototype.init = function(players_count) {
 	}, false);
 
 	canvas.addEventListener("mouseup", function(e) {
-		if (!self.activePlayer.did_shot && self.activePlayer.isCharging) {
+		if (self.activePlayer && !self.activePlayer.did_shot && self.activePlayer.isCharging) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
@@ -76,7 +76,7 @@ GameScene.prototype.init = function(players_count) {
 		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
-		if (!self.activePlayer.did_shot) {
+		if (self.activePlayer && !self.activePlayer.did_shot) {
 			is_moving = true;
 			self.activePlayer.isCharging = true;
 			self.activePlayer.chargedFor = 0;
@@ -114,6 +114,10 @@ GameScene.prototype.update = function(dt) {
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
+				if(player == this.activePlayer) {
+					console.log('active died')
+					this.nextPlayer(true);
+				}
 				this.players.splice(i--, 1);
 				break;
 		}
@@ -169,22 +173,27 @@ GameScene.prototype.render = function() {
 
 // returns random player
 GameScene.prototype.getRandomPlayer = function() {
-	return arrayRand(this.players);
+	return this.players.sort(function() {return 0.5 - Math.random()})[0];
 }
 
 // loops through players collection getting next one
-GameScene.prototype.nextPlayer = function() {
-	var origin = this.getActivePlayer();
-	var next = this.players[origin.index + 1] || this.players[0];
+GameScene.prototype.nextPlayer = function(active_died) {
+	var next;
+	
+	if(!active_died) {
+		this.activePlayer.isActive = false;
+		this.players.push(this.players.shift())
+		next = this.players[0];
+	} else {
+		next = this.players[0];
+	}
+	
 	this.activePlayer = next;
 	
 	// todo handle no more players
 	if(!next) return console.log('GAME OVER')
 	
 	next.beginTurn();
-//	next.isActive = true;
-//	next.did_shot = false;
-	origin.isActive = false;
 }
 
 // returns currently active player
