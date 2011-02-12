@@ -28,3 +28,7 @@ EScene.prototype.update = function(dt) {
 EScene.prototype.render = function() {
 	
 }
+
+EScene.prototype.onUnload = function() {
+	// called before scene is going to get switched with another scene
+}

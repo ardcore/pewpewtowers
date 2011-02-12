@@ -99,7 +99,7 @@ Map.prototype.render = function() {
 	
 	
 	// draw collidable terrain
-	ctx.fillStyle = "#4da633";
+	ctx.fillStyle = "#6dc253";
 	ctx.beginPath();
 	ctx.moveTo(this.map[0].x, this.map[0].y);
 	
