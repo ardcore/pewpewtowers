@@ -34,7 +34,7 @@ function Tower() {
 		width: 2,
 		color: "red",
 		height: 0,
-		maxCharge: 2000
+		maxCharge: 2200
 	}
 
 	this.bullet = {
