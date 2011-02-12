@@ -13,13 +13,12 @@ Map.prototype.init = function(width, height) {
 	
 	var view_controller = EViewController.shared();
 	this.update_collision_map = false;
+	this.update_collision_map_area;
 	
 	this.width = width;
 	this.height = height;
 	
 	this.generateMap();
-	// dummy data
-	this.destroyed_areas = [{x: 120, y: 120, r: 50 }, {x: 290, y: 190, r: 50 }, { x: 490, y: 310, r: 50}, { x: 720, y: 250, r: 50 }];
 	// store image data for pixel collision detection
 	view_controller.clear();
 	this.render();
@@ -48,6 +47,17 @@ Map.prototype.generateMap = function() {
 	// place the last point at the right edge of the map
 	this.map.push({x: this.width, y: ~~(Math.random() * this.height * 0.6 + 0.5) + this.height * 0.2 });
 	
+}
+
+Map.prototype.addDestruction = function(pos, r) {
+	this.update_collision_map = true;
+	var x = pos.x - r;
+	var y = pos.y - r;
+	if(x < 0) x = 0;
+	if(y < 0) y = 0;
+	// todo nie pozwolic kopiowac pikseli z poza canvasa dol + prawo (lewo/gora zrobione) powoduje crasha :)
+	this.update_collision_map_area = {x: x, y: y, w: r * 2, h: r * 2};
+	this.destroyed_areas.push({x: pos.x, y: pos.y, r: r});
 }
 
 Map.prototype.collidesWith = function(object) {
@@ -102,8 +112,7 @@ Map.prototype.render = function() {
 	}
 	
 	if (this.update_collision_map) {
-		this.update_collision_map = false;
-		this.map_image_data = view_controller.context.getImageData(0, 0, screen.width, screen.height);
+		this.map_image_data = ctx.getImageData(this.update_collision_map_area.x, this.update_collision_map_area.y, this.update_collision_map_area.w, this.update_collision_map_area.h);
 	}
 	
 	// draw background terrain
@@ -122,4 +131,8 @@ Map.prototype.render = function() {
 	
 	ctx.globalCompositeOperation = 'source-over';
 
+	if (this.update_collision_map) {
+		this.update_collision_map = false;
+		ctx.putImageData(this.map_image_data, this.update_collision_map_area.x, this.update_collision_map_area.y);
+	}
 }

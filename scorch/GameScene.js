@@ -4,6 +4,7 @@ GameScene.prototype.constructor = GameScene;
 function GameScene() {
 	this.map;
 	this.players = [];
+	this.explosions = [];
 }
 
 GameScene.prototype.init = function(players_count) {
@@ -50,21 +51,32 @@ GameScene.prototype.init = function(players_count) {
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
 		is_moving = true;
-		// to get mouse pos on canvas > mousePosToCanvasCoords(e)
+		self.explosions.push(new Explosion().init(mousePosToCanvasCoords(e), 50, 2));
 	}, false);
-	
 	
 	return this;
 	
 }
 
-GameScene.prototype.update = function() {
-	
+GameScene.prototype.update = function(dt) {
+	for (var i = 0; i < this.explosions.length;) {
+		var explosion = this.explosions[i];
+		if (explosion.update(dt) == true) {
+			this.map.addDestruction(explosion.pos, explosion.radius);
+			this.explosions.splice(i, 1)
+		} else {
+			i++;
+		}
+	}
 }
 
 GameScene.prototype.render = function() {
 	
 	// render the map
 	this.map.render();
+	
+	for (var i = 0, n = this.explosions.length; i < n; i++) {
+		this.explosions[i].render();
+	}
 	
 }
