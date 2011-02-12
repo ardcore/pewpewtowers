@@ -69,8 +69,34 @@ console.log("scorch");
 // socket.io
 var io = io.listen(server);
 
+
+game = (function() {
+
+	var pew = {};
+	var players = {};
+
+	return {
+
+		joinPlayer: function(client) {
+			player[client.sessionId] = client;
+			client.broadcast({ type: 'playerJoined', data: client.sessionId });
+
+
+		}
+
+	}
+
+})()
+
+
+Player = function(name, client) {
+	this.name = name;
+	this.client = client;
+}
+
 io.on('connection', function(client) {
 	// client.broadcast({ type: 'announcement', data: client.sessionId + ' connected' });
+
 	client.send({type: 'connected'});
 
 	client.on('message', function(rec) {
