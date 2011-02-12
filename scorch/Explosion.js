@@ -23,8 +23,8 @@ Explosion.prototype.update = function(dt) {
 Explosion.prototype.render = function() {
 	var ctx = EViewController.shared().context;
 	
-	ctx.fillStyle = "#6a6a6a";
 	ctx.beginPath();
+	ctx.fillStyle = "#6a6a6a";
 	ctx.arc(this.pos.x, this.pos.y, this.radius * this.life / this.anim_length, 0, Math.PI * 2);
 	ctx.fill();
 	
