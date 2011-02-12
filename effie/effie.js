@@ -36,7 +36,9 @@ effie = (function() {
 			opacity,
 			velXTrans, velYTrans,
 			sizeXTrans, sizeYTrans,
-			blending;
+			blending,
+			shape,
+			radius;
 
 
 		var opt, eff; // buffers for effect data
@@ -56,6 +58,9 @@ effie = (function() {
 		longevity = opt.longevity || eff.longevity || Infinity;
 		falldown = opt.falldown || eff.falldown || 1;
 		color = opt.color || eff.color;
+
+		shape = opt.shape || eff.shape || 'rect';
+		radius = opt.radius || eff.radius || 10;
 
 		this.callbackAfterDeath = opt.callbackAfterDeath || eff.callbackAfterDeath;
 
@@ -116,7 +121,14 @@ effie = (function() {
 				ctx.globalCompositeOperation = blending;
 			}
 
-			context.fillRect(x, y, sizeX, sizeY);
+			if (shape == 'circle') {
+				context.beginPath();
+				context.arc(x, y, radius, 0, Math.PI*2);
+				context.closePath();
+				context.fill();
+			} else {
+				context.fillRect(x, y, sizeX, sizeY);
+			}
 			ctx.restore();
 		};
 

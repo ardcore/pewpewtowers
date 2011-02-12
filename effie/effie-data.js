@@ -17,7 +17,9 @@ effie.effects = {
 
 	scorchfire: {
 		name: 'scorchfire',
-		count: 70, // particle count
+		shape: 'circle',
+		radius: 3,
+		count: 40, // particle count
 		degradation: .85,
 		velX: '-40..40',
 		velY: '-130..30',
