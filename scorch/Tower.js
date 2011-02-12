@@ -30,8 +30,16 @@ Tower.prototype.init = function(pos, index) {
 
 Tower.prototype.updateRifleAngle = function(mouse_pos) {
 	
-	var angle = Math.atan2((this.pos.y - mouse_pos.y), (this.pos.x - mouse_pos.x))
+	var angle = Math.atan2((this.pos.y - mouse_pos.y), (this.pos.x - mouse_pos.x));
+	
+	if (angle < -Math.PI / 2) {
+		angle = Math.PI;
+	} else if (angle > -Math.PI / 2 && angle < 0) {
+		angle = 0;
+	}
+	
 	this.rifle.angle = angle;
+	console.log(angle);
 	
 }
 
