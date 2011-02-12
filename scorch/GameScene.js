@@ -21,7 +21,7 @@ GameScene.prototype.init = function(players_count) {
 	for (var i = 0; i < players_count; i++) {
 		// create new player at randomized position inside it's placing area 
 		var player = new Tower().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 , y: 0 });
-		player.pos.y = this.map.collidesWith(player).y;
+		player.pos.y = this.map.findYPosition(player);
 		this.players.push(player);
 		
 	}

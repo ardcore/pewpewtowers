@@ -50,12 +50,22 @@ Map.prototype.generateMap = function() {
 Map.prototype.collidesWith = function(object) {
 	
 	var screen = EViewController.shared().size,
+		x = object.pos.x,
+		y = object.pos.y;
+		
+	return (this.map_image_data.data[x + 3 + y * screen.width * 4] > 0) ? true : false;
+	
+}
+
+Map.prototype.findYPosition = function(object) {
+	
+	var screen = EViewController.shared().size,
 		x = object.pos.x;	
 
 	for (var i = 0, n = screen.height; i < n; i++) {
 		var pixel_alpha = this.map_image_data.data[x + 3 + i * screen.width * 4];
 		if(pixel_alpha == 0) continue;
-		return { x: x, y: i};
+		return i;
 	}
 	
 }
