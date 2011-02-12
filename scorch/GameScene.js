@@ -41,7 +41,8 @@ GameScene.prototype.init = function(players_count) {
 	// SUPER HACKY MOUSE SUPPORT
 	
 	var is_moving,
-		self = this;
+		self = this,
+		mouseDownTimeStamp;
 		
 	function mousePosToCanvasCoords(e) {
 		
@@ -53,24 +54,26 @@ GameScene.prototype.init = function(players_count) {
 	};
 	
 	canvas.addEventListener("mousemove", function(e) {
-		if (is_moving) {
-			
-		} else {
-			var mousePos = mousePosToCanvasCoords(e);
-			self.activePlayer.updateRifleAngle(mousePos);
-		}
-
+		var mousePos = mousePosToCanvasCoords(e);
+		self.activePlayer.updateRifleAngle(mousePos);
 	}, false);
 
 	document.body.addEventListener("mouseup", function(e) {
-		is_moving = false;
-		
-		// shot bullet
-		self.bullets.push(self.activePlayer.shot());
+		if (!self.activePlayer.did_shot) {
+			is_moving = false;
+			self.activePlayer.isCharging = false;
+			// shot bullet
+			self.bullets.push(self.activePlayer.shot());
+		}
 		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
-		is_moving = true;
+		if (!self.activePlayer.did_shot) {
+			is_moving = true;
+			self.activePlayer.isCharging = true;
+			self.activePlayer.chargedFor = 0;
+			self.activePlayer.chargeStart = +new Date();
+		}
 	}, false);
 	
 	return this;
@@ -78,7 +81,18 @@ GameScene.prototype.init = function(players_count) {
 }
 
 GameScene.prototype.update = function(dt) {
-	
+
+	if (this.activePlayer && this.activePlayer.isCharging) {
+		var chargeTime = +new Date() - this.activePlayer.chargeStart;
+		this.activePlayer.setChargedFor( chargeTime );
+	}
+
+	if (this.activePlayer && !this.activePlayer.did_shot && this.activePlayer.readyToShoot) {
+		this.bullets.push(this.activePlayer.shot());
+		this.activePlayer.readyToShoot = false;
+		this.chargedFor = 0;		
+	}
+
 	for (var i = 0; i < this.players.length; i++) {
 		this.players[i].update(dt);
 	}
@@ -98,9 +112,7 @@ GameScene.prototype.update = function(dt) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt)) {
 			this.map.addDestruction(explosion.pos, explosion.radius);
-			console.log(this.explosions.length)
 			this.explosions.splice(i--, 1);
-			console.log(this.explosions.length)
 		} 
 	}
 }
