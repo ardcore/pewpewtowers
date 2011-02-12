@@ -143,9 +143,6 @@ GameScene.prototype.update = function(dt) {
 				}
 			}
 			this.map.addDestruction(explosion.pos, explosion.radius);
-			var explosionEffect = effie.createEffect(effie.effects.chaos, [explosion.pos.x, explosion.pos.y]);
-			explosionEffect.radius = explosion.radius;
-			explosionEffect.startEffect()
 			this.explosions.splice(i--, 1);
 		} 
 	}

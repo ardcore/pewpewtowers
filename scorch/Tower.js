@@ -15,6 +15,8 @@ function Tower() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
+	this.is_burning = false;
+	this.burnEffect = null;
 
 	this.pos = {};
 	this.size = {
@@ -98,6 +100,15 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
 	console.log(this, 'got hit');
+
+	if (this.is_burning) {
+		this.burnEffect.count = this.burnEffect.count*2;
+	} else {
+		var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
+		burnEffect.startEffect();
+		this.burnEffect = burnEffect;
+	}
+
 	// react to being hit
 }
 

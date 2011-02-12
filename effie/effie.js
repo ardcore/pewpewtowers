@@ -247,7 +247,7 @@ effie = (function() {
 			ctx.fillText(effie.ticker.fps | 0, 10, 10, 30);
 		},
 
-		createEffect: function(effect, coords) {
+		createEffect: function(effect, coords, objToFollow) {
 
 			var effect,
 				clearMode,
@@ -280,10 +280,16 @@ effie = (function() {
 				},
 
 				addParticle: function() {
-					if (typeof emitter == "function") {
-						coords = emitter.call(effect);
+
+					if (objToFollow) {
+						coords = [objToFollow.pos.x, objToFollow.pos.y];
 					} else {
-						coords = emitter.concat();
+
+						if (typeof emitter == "function") {
+							coords = emitter.call(effect);
+						} else {
+							coords = emitter.concat();
+						}
 					}
 					eff.particles.push(new Particle(coords[0], coords[1], effect));
 				},
@@ -291,7 +297,11 @@ effie = (function() {
 
 				startEffect: function() {
 					clearMode = effect.clearMode;
-					emitter = coords || effect.emitterCoords || [effie.data.halfw, effie.data.halfh];
+					if (objToFollow) {
+						emitter = [objToFollow.pos.x, objToFollow.pos.y]
+					} else {
+						emitter = coords || effect.emitterCoords || [effie.data.halfw, effie.data.halfh];
+					}
 
 					var len = effect.count;
 

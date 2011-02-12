@@ -15,10 +15,9 @@ effie.effects = {
 		clearMode: "full" // not supported
 	},
 
-	fire: {
-		name: 'fire',
-		duration: 5000,
-		count: 140, // particle count
+	scorchfire: {
+		name: 'scorchfire',
+		count: 70, // particle count
 		degradation: .85,
 		velX: '-40..40',
 		velY: '-130..30',
@@ -30,7 +29,9 @@ effie.effects = {
 		callbackAfterDeath: function(obRef) {
 			obRef.addParticle();
 		},
-		emitterCoords: [100,200],
+		emitterCoords: function(obj) {
+			return [obj.pos.x, obj.pos.y];
+		},
 		clearMode: "full",
 		blending: "lighter"
 	},
