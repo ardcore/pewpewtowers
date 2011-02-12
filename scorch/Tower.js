@@ -8,6 +8,8 @@ function Tower() {
 	this.isCharging = false;
 	this.chargeStart = 0;
 	this.chargedFor = 0;
+	this.readyToShoot = false;
+	this.did_shot = false;
 
 	this.pos = {};
 	this.size = {
@@ -40,6 +42,8 @@ function Tower() {
 Tower.prototype.setChargedFor = function(time) {
 	if (time <= this.powerbar.maxCharge) {
 		this.chargedFor = time;
+	} else {
+		this.readyToShoot = true;
 	}
 }
 
@@ -56,6 +60,9 @@ Tower.prototype.shot = function() {
 	var pos = {};
 	pos.x = this.pos.x + -Math.cos(this.rifle.angle) * this.rifle.width;
 	pos.y = this.pos.y - this.size.height / 2 + 3 + -Math.sin(this.rifle.angle) * this.rifle.width;
+	this.chargedFor = 0;
+	this.powerbar.height = 0;
+	this.did_shot = true;
 	return new Bullet().init(pos, this.rifle.angle, vel, this.bullet.r);
 }
 
@@ -71,10 +78,6 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 	
 	this.rifle.angle = angle;
 	
-}
-
-Tower.prototype.increasePowerTo = function(timeHeld) {
-console.log('increasing to ' + timeHeld)
 }
 
 Tower.prototype.update = function(dt) {
