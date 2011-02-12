@@ -27,7 +27,7 @@ GameScene.prototype.init = function(players_count) {
 	this.map = new Map().init(screen.width, screen.height);
 	
 	// set worl gravity
-	this.gravity = { x: 0, y: 40 };
+	this.gravity = { x: 0, y: 50 };
 	
 	// calculate horizontal placing area of player's tower
 	player_pos_step = screen.width / players_count;
@@ -75,7 +75,7 @@ GameScene.prototype.init = function(players_count) {
 		}
 		
 	}, false);
-	canvas.addEventListener("mousedown", function(eëë) {
+	canvas.addEventListener("mousedown", function(e) {
 		if (!self.activePlayer.did_shot) {
 			is_moving = true;
 			self.activePlayer.isCharging = true;
@@ -106,13 +106,13 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		switch(player.update(dt)) {
-			case ACTION.IS_FALLING:
+			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if (player.pos.y >= target_pos) {
 					player.stoppedFalling(target_pos);
 				} 
 				break;
-			case ACTION.OUT_OF_BOUNDS:
+			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
 				this.players.splice(i--, 1);
 				break;
