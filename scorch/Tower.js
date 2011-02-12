@@ -116,7 +116,7 @@ Tower.prototype.update = function(dt) {
 		this.v.y += gravity.y * dt;
 		this.pos.y += this.v.y * dt;
 		
-		if(this.pos.y - this.size.height + 3 > screen.height) {
+		if(this.pos.y - this.size.height + 3 > screen.height) {	
 			return PLAYER_ACTION.OUT_OF_BOUNDS;
 		}
 		

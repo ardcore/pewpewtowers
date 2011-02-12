@@ -13,6 +13,11 @@ function GameScene() {
 GameScene.prototype.init = function(players_count) {
 
 	var that = this;
+
+	// start effie
+	var effieTarget = document.getElementById("Einie");
+	effie.applyTo(effieTarget).startTimer();
+
 	
 	if(!players_count) players_count = 5;
 	var screen = EViewController.shared().size,
@@ -22,7 +27,7 @@ GameScene.prototype.init = function(players_count) {
 	this.map = new Map().init(screen.width, screen.height);
 	
 	// set worl gravity
-	this.gravity = { x: 0, y: 40 };
+	this.gravity = { x: 0, y: 50 };
 	
 	// calculate horizontal placing area of player's tower
 	player_pos_step = screen.width / players_count;
@@ -60,8 +65,8 @@ GameScene.prototype.init = function(players_count) {
 		}
 	}, false);
 
-	document.body.addEventListener("mouseup", function(e) {
-		if (!self.activePlayer.did_shot) {
+	canvas.addEventListener("mouseup", function(e) {
+		if (!self.activePlayer.did_shot && self.activePlayer.isCharging) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
@@ -92,6 +97,8 @@ GameScene.prototype.update = function(dt) {
 
 	if (this.activePlayer && !this.activePlayer.did_shot && this.activePlayer.readyToShoot) {
 		this.bullets.push(this.activePlayer.shot());
+		this.nextPlayer();
+		
 		this.activePlayer.readyToShoot = false;
 		this.chargedFor = 0;		
 	}
@@ -136,6 +143,9 @@ GameScene.prototype.update = function(dt) {
 				}
 			}
 			this.map.addDestruction(explosion.pos, explosion.radius);
+			var explosionEffect = effie.createEffect(effie.effects.chaos, [explosion.pos.x, explosion.pos.y]);
+			explosionEffect.radius = explosion.radius;
+			explosionEffect.startEffect()
 			this.explosions.splice(i--, 1);
 		} 
 	}
