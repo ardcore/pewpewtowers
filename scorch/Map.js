@@ -17,11 +17,13 @@ Map.prototype.init = function(width, height) {
 	
 	this.generateMap();
 	
-	
 	// store image data for pixel collision detection
 	view_controller.clear();
 	this.render();
 	this.map_image_data = view_controller.context.getImageData(0, 0, view_controller.size.width, view_controller.size.height);
+	// create empty pixeldata for terrain destruction and damage alpha maps
+	this.destruction_alpha_map = view_controller.context.createImageData(view_controller.size.width, view_controller.size.height);
+	this.terrain_damage_alpha_map = view_controller.context.createImageData(view_controller.size.width, view_controller.size.height);
 	
 	return this;
 }
@@ -42,6 +44,19 @@ Map.prototype.generateMap = function() {
 	
 	// place the last point at the right edge of the map
 	this.map.push({x: this.width, y: ~~(Math.random() * this.height * 0.6 + 0.5) + this.height * 0.2 });
+	
+}
+
+Map.prototype.collidesWith = function(object) {
+	
+	var screen = EViewController.shared().size,
+		x = object.pos.x;	
+
+	for (var i = 0, n = screen.height; i < n; i++) {
+		var pixel_alpha = this.map_image_data.data[x + 3 + i * screen.width * 4];
+		if(pixel_alpha == 0) continue;
+		return { x: x, y: i};
+	}
 	
 }
 
