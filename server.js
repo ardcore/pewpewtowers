@@ -34,8 +34,24 @@ server = http.createServer(function(req, res) {
 			res.writeHead(200, {'Content-Type': 'text/css'})
 			res.write(data, 'utf8');
 			res.end();
-		});		
-	} else {
+		})
+	} else if (path.match(/\.png$/)) {
+		fs.readFile(__dirname + path, function(err, data) {
+			if (err) return send404(res);
+			res.writeHead(200, {'Content-Type': 'image/png'})
+			res.write(data, 'utf8');
+			res.end();
+		})
+	} else if (path.match(/\.ttf/)) {
+		fs.readFile(__dirname + path, function(err, data) {
+			if (err) return send404(res);
+			res.writeHead(200, {'Content-Type': 'application/octet-stream'})
+			res.write(data, 'utf8');
+			res.end();
+		})
+	}
+
+	else {
 		send404(res);
 	}
 
