@@ -22,7 +22,7 @@ GameScene.prototype.init = function(players_count) {
 	this.map = new Map().init(screen.width, screen.height);
 	
 	// set worl gravity
-	this.gravity = { x: 0, y: 20 };
+	this.gravity = { x: 0, y: 40 };
 	
 	// calculate horizontal placing area of player's tower
 	player_pos_step = screen.width / players_count;
