@@ -23,7 +23,7 @@ effie = (function() {
 	Particle = function(x, y, effect, options) {
 
 		this.toString = function() {
-			return "[particle " + (effect.name || "unnamed") + "]";
+//			return "[particle " + (effect.name || "unnamed") + "]";
 		};
 
 		var degradation, // speed modificator. can be >0 (TODO: normalize values)
@@ -231,7 +231,14 @@ effie = (function() {
 		update: function(dt, elapsedTime) {
 			effie.data.canvas.width = effie.data.canvas.width;
 			for (var i = 0; i < this.currentEffects.length; ) {
-				
+				if (this.currentEffects[i].forceQuit) {
+					this.currentEffects[i].particles = [];
+					this.currentEffects[i] = null;
+					//debugger;
+					this.currentEffects.splice(i, 1);
+					continue;
+				}
+
 				if (this.currentEffects[i].particles.length == 0) {
 					this.currentEffects[i] = null;
 					this.currentEffects.splice(i, 1);
@@ -260,6 +267,7 @@ effie = (function() {
 
 				particles: [],
 				elapsedTime: 0,
+				isActive: true,
 
 				fpsTick: function(dt) {
 					effie.ticker.current_time = +new Date();
@@ -282,7 +290,7 @@ effie = (function() {
 				addParticle: function() {
 
 					if (objToFollow) {
-						coords = [objToFollow.pos.x, objToFollow.pos.y];
+						coords = [objToFollow.pos.x, objToFollow.pos.y - objToFollow.size.height];
 					} else {
 
 						if (typeof emitter == "function") {
@@ -298,7 +306,7 @@ effie = (function() {
 				startEffect: function() {
 					clearMode = effect.clearMode;
 					if (objToFollow) {
-						emitter = [objToFollow.pos.x, objToFollow.pos.y]
+						emitter = [objToFollow.pos.x + objToFollow.size.width/2, objToFollow.pos.y - objToFollow.size.height];
 					} else {
 						emitter = coords || effect.emitterCoords || [effie.data.halfw, effie.data.halfh];
 					}
@@ -317,17 +325,19 @@ effie = (function() {
 					}
 				},
 
+				stopEffect: function() {
+					this.isActive = false;
+				},
+
 				update: function(dt, elapsedTime) {
 					effectDuration -= (dt*1000);
-
-					
 					for (var i = 0; i < this.particles.length; i++) {
-						if (!this.particles[i].isDead) {
+						if (this.isActive && !this.particles[i].isDead) {
 							this.particles[i].update(dt, elapsedTime);
 							this.particles[i].draw(ctx);
 							//console.log(effectDuration);
 						} else {
-							if (effectDuration > 0 && this.particles[i].callbackAfterDeath) {
+							if (this.isActive && effectDuration > 0 && this.particles[i].callbackAfterDeath) {
 								this.particles[i].callbackAfterDeath(this);
 							}
 							this.particles[i] = null;

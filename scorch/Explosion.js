@@ -23,7 +23,7 @@ Explosion.prototype.hitTower = function(obj) {
 		size: obj.size
 	};
 	// add damage calculation based on distance from center of explosion
-	return (ECollisions.circleRectCollision(this, tower)) ? 1 : 0;
+	return (ECollisions.circleRectCollision(this, tower)) ? 10 : 0;
 }
 
 Explosion.prototype.update = function(dt) {

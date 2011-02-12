@@ -4,7 +4,8 @@
 
 var PLAYER_ACTION = {
 	FALLING: 1,
-	OUT_OF_BOUNDS: 2
+	OUT_OF_BOUNDS: 2,
+	IS_DEAD: 3
 }
 
 function Tower() {
@@ -17,6 +18,7 @@ function Tower() {
 	this.did_shot = false;
 	this.is_burning = false;
 	this.burnEffect = null;
+	this.is_dead = false;
 
 	this.pos = {};
 	this.size = {
@@ -44,15 +46,18 @@ function Tower() {
 		r: 75
 	}
 
+	this.timer = null;
+	this.hp = 20;
+
 }
 
 Tower.prototype.init = function(pos, index) {
-
 	this.pos = pos;
 	this.index = index;
 	this.v = { x: 0, y: 0 };
+	this.timer = new Timer("timer", 20000, 50, function() {  }, "blue", "pink");
+	this.timer.setTimeLeft(20000);
 	return this;
-	
 }
 
 Tower.prototype.beginTurn = function() {
@@ -62,6 +67,9 @@ Tower.prototype.beginTurn = function() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
+	this.timer.stop();
+	this.timer.setTimeLeft(20000);
+	this.timer.start();
 }
 
 Tower.prototype.setChargedFor = function(time) {
@@ -80,6 +88,7 @@ Tower.prototype.shot = function() {
 	this.chargedFor = 0;
 	this.powerbar.height = 0;
 	this.did_shot = true;
+	this.timer.stop();
 	return new Bullet().init(pos, this.rifle.angle, vel, this.bullet.r);
 }
 
@@ -100,9 +109,9 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
 	console.log(this, 'got hit');
-
+	this.hp = this.hp - damage;
 	if (this.is_burning) {
-		this.burnEffect.count = this.burnEffect.count*2;
+		this.burnEffect.count = this.burnEffect.count*1.2;
 	} else {
 		var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
 		burnEffect.startEffect();
@@ -120,6 +129,10 @@ Tower.prototype.stoppedFalling = function(y_pos) {
 
 Tower.prototype.update = function(dt) {
 	
+	if(this.hp < 1) {
+		return PLAYER_ACTION.IS_DEAD;
+	}
+
 	if(this.is_falling) {
 		var gravity = EGameController.shared().current_scene.gravity,
 			screen = EViewController.shared().size;
@@ -130,9 +143,11 @@ Tower.prototype.update = function(dt) {
 		if(this.pos.y - this.size.height + 3 > screen.height) {	
 			return PLAYER_ACTION.OUT_OF_BOUNDS;
 		}
-		
+
 		return PLAYER_ACTION.IS_FALLING;
 	}
+
+
 }
 
 Tower.prototype.render = function() {

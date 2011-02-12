@@ -41,7 +41,8 @@ GameScene.prototype.init = function(players_count) {
 	}
 
 	// randomize starting player
-	this.setActivePlayer(this.getRandomPlayer());
+	this.setActivePlayer( this.getRandomPlayer() );
+	this.activePlayer.beginTurn();
 	
 	// SUPER HACKY MOUSE SUPPORT
 	
@@ -66,7 +67,7 @@ GameScene.prototype.init = function(players_count) {
 	}, false);
 
 	canvas.addEventListener("mouseup", function(e) {
-		if (self.activePlayer && !self.activePlayer.did_shot && self.activePlayer.isCharging) {
+		if (!self.activePlayer.did_shot && self.activePlayer.isCharging) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
@@ -76,7 +77,7 @@ GameScene.prototype.init = function(players_count) {
 		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
-		if (self.activePlayer && !self.activePlayer.did_shot) {
+		if (!self.activePlayer.did_shot) {
 			is_moving = true;
 			self.activePlayer.isCharging = true;
 			self.activePlayer.chargedFor = 0;
@@ -106,6 +107,11 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		switch(player.update(dt)) {
+
+			case PLAYER_ACTION.IS_DEAD:
+				this.players[i].burnEffect.stopEffect();
+				this.players.splice(i--, 1);			
+				break;
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if (player.pos.y >= target_pos) {
@@ -114,10 +120,6 @@ GameScene.prototype.update = function(dt) {
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
-				if(player == this.activePlayer) {
-					console.log('active died')
-					this.nextPlayer(true);
-				}
 				this.players.splice(i--, 1);
 				break;
 		}
@@ -177,9 +179,10 @@ GameScene.prototype.getRandomPlayer = function() {
 }
 
 // loops through players collection getting next one
+
 GameScene.prototype.nextPlayer = function(active_died) {
 	var next;
-	
+
 	if(!active_died) {
 		this.activePlayer.isActive = false;
 		this.players.push(this.players.shift())
@@ -187,12 +190,12 @@ GameScene.prototype.nextPlayer = function(active_died) {
 	} else {
 		next = this.players[0];
 	}
-	
+
 	this.activePlayer = next;
-	
+
 	// todo handle no more players
 	if(!next) return console.log('GAME OVER')
-	
+
 	next.beginTurn();
 }
 
