@@ -55,7 +55,9 @@ GameScene.prototype.init = function(players_count) {
 	
 	canvas.addEventListener("mousemove", function(e) {
 		var mousePos = mousePosToCanvasCoords(e);
-		self.activePlayer.updateRifleAngle(mousePos);
+		if(self.activePlayer) {
+			self.activePlayer.updateRifleAngle(mousePos);
+		}
 	}, false);
 
 	document.body.addEventListener("mouseup", function(e) {
@@ -95,7 +97,19 @@ GameScene.prototype.update = function(dt) {
 	}
 
 	for (var i = 0; i < this.players.length; i++) {
-		this.players[i].update(dt);
+		var player = this.players[i];
+		switch(player.update(dt)) {
+			case ACTION.IS_FALLING:
+				var target_pos = this.map.findYPosition(player)
+				if (player.pos.y >= target_pos) {
+					player.stoppedFalling(target_pos);
+				} 
+				break;
+			case ACTION.OUT_OF_BOUNDS:
+				console.log(player, 'is dead! sorry :(');
+				this.players.splice(i--, 1);
+				break;
+		}
 	}
 	
 	for (var i = 0, bullet; i < this.bullets.length; i++) {
@@ -112,6 +126,15 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.explosions.length; i++) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt)) {
+			for (var j = 0, n = this.players.length; j < n; j++) {
+				var player = this.players[j],
+					damage;
+					
+				if (damage = explosion.hitTower(player)) {
+					player.gotHit(damage);
+					// handle after hit action - create smoke etc
+				}
+			}
 			this.map.addDestruction(explosion.pos, explosion.radius);
 			this.explosions.splice(i--, 1);
 		} 
@@ -147,6 +170,10 @@ GameScene.prototype.nextPlayer = function() {
 	var origin = this.getActivePlayer();
 	var next = this.players[origin.index + 1] || this.players[0];
 	this.activePlayer = next;
+	
+	// todo handle no more players
+	if(!next) return console.log('GAME OVER')
+	
 	next.beginTurn();
 //	next.isActive = true;
 //	next.did_shot = false;

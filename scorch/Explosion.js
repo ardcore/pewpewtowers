@@ -14,6 +14,18 @@ Explosion.prototype.init = function(pos, radius, anim_length) {
 	return this;
 }
 
+Explosion.prototype.hitTower = function(obj) {
+	var tower = {
+		pos: {
+			x: obj.pos.x - obj.size.width / 2,
+			y: obj.pos.y - obj.size.height
+		},
+		size: obj.size
+	};
+	// add damage calculation based on distance from center of explosion
+	return (ECollisions.circleRectCollision(this, tower)) ? 1 : 0;
+}
+
 Explosion.prototype.update = function(dt) {
 	this.life += dt;
 	

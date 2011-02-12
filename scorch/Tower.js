@@ -2,6 +2,11 @@
  * TOWER
  */
 
+var ACTION = {
+	FALLING: 1,
+	OUT_OF_BOUNDS: 2
+}
+
 function Tower() {
 	this.index;
 	this.isActive;
@@ -39,6 +44,15 @@ function Tower() {
 
 }
 
+Tower.prototype.init = function(pos, index) {
+
+	this.pos = pos;
+	this.index = index;
+	this.v = { x: 0, y: 0 };
+	return this;
+	
+}
+
 Tower.prototype.beginTurn = function() {
 	this.isActive = true;
 	this.isCharging = false;
@@ -54,14 +68,6 @@ Tower.prototype.setChargedFor = function(time) {
 	} else {
 		this.readyToShoot = true;
 	}
-}
-
-Tower.prototype.init = function(pos, index) {
-
-	this.pos = pos;
-	this.index = index;
-	return this;
-	
 }
 
 Tower.prototype.shot = function() {
@@ -89,8 +95,33 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 	
 }
 
-Tower.prototype.update = function(dt) {
+Tower.prototype.gotHit = function(damage) {
+	this.is_falling = true;
+	console.log(this, 'got hit');
+	// react to being hit
+}
 
+Tower.prototype.stoppedFalling = function(y_pos) {
+	this.pos.y = y_pos;
+	this.v.y = 0;
+	this.is_falling = false;
+}
+
+Tower.prototype.update = function(dt) {
+	
+	if(this.is_falling) {
+		var gravity = EGameController.shared().current_scene.gravity,
+			screen = EViewController.shared().size;
+		
+		this.v.y += gravity.y * dt;
+		this.pos.y += this.v.y * dt;
+		
+		if(this.pos.y - this.size.height + 3 > screen.height) {
+			return ACTION.OUT_OF_BOUNDS;
+		}
+		
+		return ACTION.IS_FALLING;
+	}
 }
 
 Tower.prototype.render = function() {
