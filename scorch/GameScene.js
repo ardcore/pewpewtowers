@@ -6,6 +6,7 @@ function GameScene() {
 	this.players = [];
 	this.activePlayer;
 	this.explosions = [];
+	this.bullets = [];
 }
 
 GameScene.prototype.init = function(players_count) {
@@ -59,6 +60,10 @@ GameScene.prototype.init = function(players_count) {
 
 	document.body.addEventListener("mouseup", function(e) {
 		is_moving = false;
+		
+		// shot bullet
+		self.bullets.push(self.activePlayer.shot());
+		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
 		is_moving = true;
@@ -93,6 +98,10 @@ GameScene.prototype.render = function() {
 
 	for (var i = 0; i < this.players.length; i++) {
 		this.players[i].render();
+	}
+	
+	for (var i = 0; i < this.bullets.length; i++) {
+		this.bullets[i].render();
 	}
 	
 	for (var i = 0, n = this.explosions.length; i < n; i++) {

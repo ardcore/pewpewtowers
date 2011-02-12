@@ -18,6 +18,11 @@ function Tower() {
 		height: 4,
 		color: "black"
 	}
+	
+	this.bullet = {
+		v: 20,
+		r: 75
+	}
 }
 
 Tower.prototype.init = function(pos, index) {
@@ -28,18 +33,24 @@ Tower.prototype.init = function(pos, index) {
 	
 }
 
+Tower.prototype.shot = function() {
+	var pos = {};
+	pos.x = this.pos.x + -Math.cos(this.rifle.angle) * this.rifle.width;
+	pos.y = this.pos.y - this.size.height / 2 + 3 + -Math.sin(this.rifle.angle) * this.rifle.width;
+	return new Bullet().init(pos, this.rifle.angle, this.bullet.v, this.bullet.r);
+}
+
 Tower.prototype.updateRifleAngle = function(mouse_pos) {
 	
 	var angle = Math.atan2((this.pos.y - mouse_pos.y), (this.pos.x - mouse_pos.x));
 	
-	if (angle < -Math.PI / 2) {
+	if (angle <= -Math.PI / 2) {
 		angle = Math.PI;
 	} else if (angle > -Math.PI / 2 && angle < 0) {
 		angle = 0;
 	}
 	
 	this.rifle.angle = angle;
-	console.log(angle);
 	
 }
 
@@ -48,12 +59,18 @@ Tower.prototype.update = function(dt) {
 }
 
 Tower.prototype.render = function() {
-	var ctx = EViewController.shared().context;
+	var ctx = EViewController.shared().context,
+		center = { 
+			x: this.pos.x,
+			y: this.pos.y - this.size.height / 2 + 3 
+		};
 	ctx.fillStyle = this.color;
-	ctx.fillRect(this.pos.x - this.size.width/2, this.pos.y - this.size.height, this.size.width, this.size.height )
+	ctx.fillRect(this.pos.x - this.size.width/2, 
+				  this.pos.y - this.size.height + 3, 
+				   this.size.width, this.size.height )
 
 	ctx.save();
-	ctx.translate(this.pos.x, this.pos.y - this.size.height / 2);
+	ctx.translate(center.x, center.y);
 	ctx.rotate(this.rifle.angle);
 	ctx.fillStyle = this.rifle.color;
 	ctx.fillRect(0 + this.rifle.height / 2,
@@ -62,7 +79,7 @@ Tower.prototype.render = function() {
 	ctx.restore();
 	if (this.isActive) {
 		ctx.beginPath();
-		ctx.arc(this.pos.x,this.pos.y - this.size.height/2,20,0,Math.PI*2,true);
+		ctx.arc(center.x, center.y, 20, 0, Math.PI*2);
 		ctx.stroke();
 	}
 }
