@@ -44,15 +44,17 @@ function Tower() {
 		r: 75
 	}
 
+	this.timer = null;
+
 }
 
 Tower.prototype.init = function(pos, index) {
-
 	this.pos = pos;
 	this.index = index;
 	this.v = { x: 0, y: 0 };
+	this.timer = new Timer("timer", 20000, 50, function() {  }, "blue", "pink");
+	this.timer.setTimeLeft(20000);
 	return this;
-	
 }
 
 Tower.prototype.beginTurn = function() {
@@ -62,6 +64,9 @@ Tower.prototype.beginTurn = function() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
+	this.timer.stop();
+	this.timer.setTimeLeft(20000);
+	this.timer.start();
 }
 
 Tower.prototype.setChargedFor = function(time) {
@@ -80,6 +85,7 @@ Tower.prototype.shot = function() {
 	this.chargedFor = 0;
 	this.powerbar.height = 0;
 	this.did_shot = true;
+	this.timer.stop();
 	return new Bullet().init(pos, this.rifle.angle, vel, this.bullet.r);
 }
 

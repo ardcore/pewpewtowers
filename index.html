@@ -14,6 +14,8 @@
 		<script type="text/javascript" src="einie/ESceneLoader.js"></script>
 
         <script type="text/javascript" src="helpers.js"></script>
+        <script type="text/javascript" src="timer.js"></script>
+
         <script type="text/javascript" src="effie/effie.js"></script>
         <script type="text/javascript" src="effie/effie-data.js"></script>
 
@@ -29,11 +31,16 @@
 			h1 { width: 960px; margin: 0 auto; }
 			#Einie { margin: 40px auto; display: block; background: lightBlue url(resources/eifle.png) no-repeat 50px 30%; }
 			#fps-console { position: absolute; top: 65px; left: 50%; margin-left: 400px; }
+            #timer {
+                position: absolute; top: 120px; left: 50%; margin-left: 400px;
+            }
 		</style>
 	</head>
 	<body>
 		<h1>Pew pew towers!</small></h1>
 		<canvas id="Einie" width="960" height="480"></canvas>
+        <canvas id="timer" width="60" height="60"></canvas>
+
 		<div id="fps-console"></div>
 		<script>
 			var einie = Einie.shared().startApp();

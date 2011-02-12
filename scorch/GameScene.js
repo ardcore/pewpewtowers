@@ -42,6 +42,7 @@ GameScene.prototype.init = function(players_count) {
 
 	// randomize starting player
 	this.setActivePlayer( this.getRandomPlayer() );
+	this.activePlayer.beginTurn();
 	
 	// SUPER HACKY MOUSE SUPPORT
 	
