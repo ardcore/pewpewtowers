@@ -89,6 +89,8 @@ GameScene.prototype.update = function(dt) {
 		if(this.map.collidesWith(bullet)) {
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
 			this.bullets.splice(i--, 1);
+		} else if(bullet.boundsCheck()) {
+			this.bullets.splice(i--, 1);
 		}
 	}
 	

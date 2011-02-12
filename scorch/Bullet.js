@@ -24,6 +24,10 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	return this;
 }
 
+Bullet.prototype.boundsCheck = function(pos, angle, v, r) {
+	return this.pos.y > EViewController.shared().size.height + r;
+}
+
 Bullet.prototype.update = function(dt) {
 	var screen = EViewController.shared().size;
 	this.v.x = this.v.x + this.ag.x * dt;
