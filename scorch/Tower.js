@@ -16,7 +16,6 @@ function Tower() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
-	this.is_burning = false;
 	this.burnEffect = null;
 	this.is_dead = false;
 
@@ -103,13 +102,12 @@ Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
 	console.log(this, 'got hit');
 	this.hp = this.hp - damage;
-	if (this.is_burning) {
-		this.burnEffect.count = this.burnEffect.count*1.2;
-	} else {
-		var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
-		burnEffect.startEffect();
-		this.burnEffect = burnEffect;
-	}
+	
+	var smoke = effie.createEffect(effie.effects.scorchsmoke, null, this);
+	smoke.startEffect();
+	
+	var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
+	burnEffect.startEffect();
 
 	// react to being hit
 }

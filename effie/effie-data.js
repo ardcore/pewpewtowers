@@ -18,16 +18,15 @@ effie.effects = {
 	scorchfire: {
 		name: 'scorchfire',
 		shape: 'circle',
-		radius: 3,
-		count: 40, // particle count
+		radius: '5..10',
+		count: 20, // particle count
 		degradation: .85,
-		velX: '-40..40',
-		velY: '-130..30',
-		sizeX: 3,
-		sizeY: 3,
+		velX: '-50..50',
+		velY: '-90..80',
 		longevity: '50..100',
 		falldown: '0.995..0.999',
 		color: "#A1370C",
+		duration: 1,
 		callbackAfterDeath: function(obRef) {
 			obRef.addParticle();
 		},
@@ -38,6 +37,34 @@ effie.effects = {
 		blending: "lighter"
 	},
 
+	scorchsmoke: {
+		name: 'scorchsmoke',
+		shape: 'circle',
+		radius: '15..25',
+		opacity: '0.4..0.9',
+		count: 10, // particle count
+		degradation: .85,
+		velX: '-150..150',
+		velY: '-230..-80',
+		longevity: '80..160',
+		falldown: '0.995..0.999',
+		color: "#b1b8af",
+		duration: 2,
+		callbackAfterDeath: function(obRef) {
+			obRef.addParticle();
+		},
+		emitterCoords: function(obj) {
+			return [obj.pos.x, obj.pos.y];
+		},
+		clearMode: "full",
+		blending: "lighter"
+	},
+	
+	scorchexplosion: {
+		name: 'scorchexplosion',
+		shape: 'circle'
+	},
+	
 	smallfire: {
 		name: 'smallfire',
 		duration: 1000, // duration of effect

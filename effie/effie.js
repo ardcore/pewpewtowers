@@ -342,7 +342,7 @@ effie = (function() {
 				},
 
 				update: function(dt, elapsedTime) {
-					effectDuration -= (dt*1000);
+					effectDuration -= (dt);
 					for (var i = 0; i < this.particles.length; i++) {
 						if (this.isActive && !this.particles[i].isDead) {
 							this.particles[i].update(dt, elapsedTime);

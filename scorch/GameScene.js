@@ -63,13 +63,13 @@ GameScene.prototype.init = function(players_count) {
 	
 	canvas.addEventListener("mousemove", function(e) {
 		var mousePos = mousePosToCanvasCoords(e);
-		if(self.activePlayer) {
+		if(self.activePlayer && !self.game_ended) {
 			self.activePlayer.updateRifleAngle(mousePos);
 		}
 	}, false);
 
 	canvas.addEventListener("mouseup", function(e) {
-		if (!self.activePlayer.did_shot && self.activePlayer.isCharging) {
+		if (!self.activePlayer.did_shot && self.activePlayer.isCharging && !self.game_ended) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
@@ -79,7 +79,7 @@ GameScene.prototype.init = function(players_count) {
 		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
-		if (!self.activePlayer.did_shot) {
+		if (!self.activePlayer.did_shot && !self.game_ended) {
 			is_moving = true;
 			self.activePlayer.isCharging = true;
 			self.activePlayer.chargedFor = 0;
@@ -92,6 +92,12 @@ GameScene.prototype.init = function(players_count) {
 }
 
 GameScene.prototype.update = function(dt) {
+
+	if (this.players.length == 1) {
+		this.gameFinished(this.activePlayer);
+		this.game_ended = true;
+		return;
+	}
 
 	if (this.activePlayer && this.activePlayer.isCharging) {
 		var chargeTime = +new Date() - this.activePlayer.chargeStart;
@@ -108,11 +114,14 @@ GameScene.prototype.update = function(dt) {
 
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
+		if(!player) break;
 		switch(player.update(dt)) {
 
 			case PLAYER_ACTION.IS_DEAD:
-				this.players[i].burnEffect.stopEffect();
-				this.players.splice(i--, 1);			
+				this.players.splice(i--, 1);
+				if(player == this.activePlayer) {
+					this.nextPlayer();
+				}			
 				break;
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
@@ -122,6 +131,9 @@ GameScene.prototype.update = function(dt) {
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
+				if(player == this.activePlayer) {
+					this.nextPlayer();
+				}			
 				this.players.splice(i--, 1);
 				break;
 		}
@@ -157,10 +169,10 @@ GameScene.prototype.update = function(dt) {
 }
 
 GameScene.prototype.render = function() {
-	
+
 	// render the map
 	this.map.render();
-
+	
 	for (var i = 0; i < this.players.length; i++) {
 		this.players[i].render();
 	}
@@ -187,16 +199,21 @@ GameScene.prototype.nextPlayer = function(active_died) {
 
 	if(!active_died) {
 		this.activePlayer.isActive = false;
-		this.players.push(this.players.shift())
-		next = this.players[0];
+		if(this.players.length) {
+			this.players.push(this.players.shift())
+			next = this.players[0];
+		}
 	} else {
 		next = this.players[0];
 	}
 
+	// todo handle no more players
+	if(!next) return console.log('GAME OVER');
+	if(this.players.length == 1) {
+		this.gameFinished(this.activePlayer);
+	}
 	this.activePlayer = next;
 
-	// todo handle no more players
-	if(!next) return console.log('GAME OVER')
 
 	next.beginTurn();
 }
@@ -209,4 +226,24 @@ GameScene.prototype.getActivePlayer = function() {
 GameScene.prototype.setActivePlayer = function(player) {
 	this.activePlayer = player;
 	player.isActive = true;
+}
+
+GameScene.prototype.gameFinished = function(player) {
+	if(this.game_ended) return false;
+	var el;
+	if(el = document.getElementById('pewpewtowers-game-won')) {
+		el.firstElementChild.innerHTML = "Player " + (this.activePlayer.index + 1) + "<br>be proud!<br>A winner is you!";
+		el.style.display = 'block';
+		el.onclick = function() {
+			EGameController.shared().changeSceneTo('menu_scene');
+		}
+	}
+}
+
+GameScene.prototype.onUnload = function() {
+	var el;
+	if (el = document.getElementById('pewpewtowers-game-won')) {
+		el.style.display = 'none';
+	}
+	
 }
