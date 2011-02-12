@@ -9,8 +9,10 @@ function GameScene() {
 }
 
 GameScene.prototype.init = function(players_count) {
+
+	var that = this;
 	
-	if(!players_count) players_count = 2;
+	if(!players_count) players_count = 5;
 	var screen = EViewController.shared().size,
 		canvas = EViewController.shared().canvas;
 		
@@ -47,9 +49,15 @@ GameScene.prototype.init = function(players_count) {
 	
 	canvas.addEventListener("mousemove", function(e) {
 		if (is_moving) {
-			// do something
+		} else {
+			var playerPos = that.activePlayer.pos;
+			var mousePos = mousePosToCanvasCoords(e);
+			var angle = Math.atan2((playerPos.y - mousePos.y), (playerPos.x - mousePos.x))
+			that.activePlayer.rifle.angle = angle;
 		}
+
 	}, false);
+
 	document.body.addEventListener("mouseup", function(e) {
 		is_moving = false;
 	}, false);
