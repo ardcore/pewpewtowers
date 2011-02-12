@@ -7,13 +7,12 @@ function Map() {
 	this.height;
 	this.map = [];
 	this.destroyed_areas = [];
+	this.buffer;
 }
 
 Map.prototype.init = function(width, height) {
 	
 	var view_controller = EViewController.shared();
-	this.update_collision_map = false;
-	this.update_collision_map_area;
 	
 	this.width = width;
 	this.height = height;
@@ -22,10 +21,14 @@ Map.prototype.init = function(width, height) {
 	// store image data for pixel collision detection
 	view_controller.clear();
 	this.render();
-	this.map_image_data = view_controller.context.getImageData(0, 0, view_controller.size.width, view_controller.size.height);
-	// create empty pixeldata for terrain destruction and damage alpha maps
-	this.destruction_alpha_map = view_controller.context.createImageData(view_controller.size.width, view_controller.size.height);
-	this.terrain_damage_alpha_map = view_controller.context.createImageData(view_controller.size.width, view_controller.size.height);
+	
+	// setup buffer for collision alpha map
+	this.buffer = view_controller.canvas.cloneNode(false);
+	this.buffer.id = "_buffer";
+	this.buffer = this.buffer.getContext('2d');
+	
+	this.collision_alpha_map = view_controller.context.getImageData(0, 0, view_controller.size.width, view_controller.size.height);
+	this.buffer.putImageData(this.collision_alpha_map, 0, 0);
 	
 	return this;
 }
@@ -50,17 +53,21 @@ Map.prototype.generateMap = function() {
 }
 
 Map.prototype.addDestruction = function(pos, r) {
-	this.update_collision_map = true;
-	var screen = EViewController.shared().size;
-		x = pos.x - r,
-		y = pos.y - r,
-		w = h = 2 * r;
-	if(x < 0) x = 0;
-	if(y < 0) y = 0;
-	if(x + w > screen.width) w = screen.width;
-	if(y + h > screen.height) h = screen.height;
-	this.update_collision_map_area = {x: x, y: y, w: w, h: h};
-	this.destroyed_areas.push({x: pos.x, y: pos.y, r: r});
+	
+	var size = EViewController.shared().size,
+		ctx = this.buffer;
+	
+	ctx.save();
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.fillStyle = "#000000";
+	ctx.beginPath();
+	ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+	ctx.fill();
+	ctx.restore();
+	
+	this.destroyed_areas.push({ x: pos.x, y: pos.y, r: r});
+	
+	this.collision_alpha_map = ctx.getImageData(0, 0, size.width, size.height)	
 }
 
 Map.prototype.collidesWith = function(object) {
@@ -69,7 +76,7 @@ Map.prototype.collidesWith = function(object) {
 		x = Math.round(object.pos.x),
 		y = Math.round(object.pos.y);
 		
-	return (this.map_image_data.data[x * 4 + 3 + y * screen.width * 4] > 0) ? true : false;
+	return (this.collision_alpha_map.data[x * 4 + 3 + y * screen.width * 4] > 0) ? true : false;
 	
 }
 
@@ -79,7 +86,7 @@ Map.prototype.findYPosition = function(object) {
 		x = object.pos.x;	
 
 	for (var i = 0, n = screen.height - 1; i < n; i++) {
-		var pixel_alpha = this.map_image_data.data[x * 4 + 3 + i * screen.width * 4];
+		var pixel_alpha = this.collision_alpha_map.data[x * 4 + 3 + i * screen.width * 4];
 		if(pixel_alpha == 0) continue;
 		return i;
 	}
@@ -122,13 +129,13 @@ Map.prototype.render = function() {
 	ctx.globalCompositeOperation = 'destination-over';
 	ctx.fillStyle = "#063100";
 	ctx.beginPath();
-	ctx.moveTo(this.map[0].x, this.map[0].y + 10);
+	ctx.moveTo(this.map[0].x, this.map[0].y + 20);
 	
 	for (var i = 1, n = this.map.length; i < n; i++) {
-		ctx.lineTo(this.map[i].x, this.map[i].y + 10);
+		ctx.lineTo(this.map[i].x, this.map[i].y + 20);
 	}
 	
-	ctx.lineTo(screen.width, screen.height + 10);
+	ctx.lineTo(screen.width, screen.height);
 	ctx.lineTo(0, screen.height);
 	ctx.fill();
 	
