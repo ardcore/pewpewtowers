@@ -7,7 +7,7 @@ body { font-family: retro; font-size: 10px; line-height: 1.5; }
 input, button { font-family: retro; }
 input { border:0; background: none; }
 button { cursor: pointer }
-h1 { width: 960px; margin: 20px auto 0; font-weight: normal; line-height: 1em }
+h1 { width: 960px; margin: 20px auto 0; font-weight: normal; line-height: 1em; position: relative; }
 #Einie { margin: 40px auto 40px; display: block; background: lightBlue url(eifle.png) no-repeat 50px 30%; }
 #fps-console { position: absolute; top: 65px; left: 50%; margin-left: 400px; }
 #i-love-walking-along-the-sea-shore, #and-listen-to-the-seaguls-crying-for-attention { width: 960px; height: 63px; margin: 0 auto; position: relative; z-index: 10; }
@@ -25,8 +25,14 @@ h1 { width: 960px; margin: 20px auto 0; font-weight: normal; line-height: 1em }
 	50% { background-position: 0 5px; }
 	100% { background-position:  0 0; }
 }
+@-webkit-keyframes movayaha {
+	0% { top: 0px }
+	25% { top: -10px }
+	75% { top: 10px; }
+	100% { top:  0; }
+}
 #pewpewtowers-menu { font-weight: bold; height: 480px; width: 960px; position: absolute; left: 50%; margin-left: -480px; margin-top: -520px;}
-#pewpewtowers-menu h1 { text-align: center; margin: 120px auto 40px; font-size: 5em}
+#pewpewtowers-menu h1 { text-align: center; margin: 120px auto 40px; font-size: 5em; -webkit-animation: movayaha linear 3s infinite; }
 #pewpewtowers-menu div, #pewpewtowers-menu input, #pewpewtowers-menu button { font-size: 1em; }
 #pewpewtowers-menu input { width: 50px; }
 #pewpewtowers-menu button { -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
