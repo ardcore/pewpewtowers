@@ -9,7 +9,8 @@ function GameScene() {
 GameScene.prototype.init = function(players_count) {
 	
 	if(!players_count) players_count = 2;
-	var screen = EViewController.shared().size;
+	var screen = EViewController.shared().size,
+		canvas = EViewController.shared().canvas;
 		
 	// create new map
 	this.map = new Map().init(screen.width, screen.height);
@@ -25,11 +26,41 @@ GameScene.prototype.init = function(players_count) {
 		this.players.push(player);
 	}
 	
+	// SUPER HACKY MOUSE SUPPORT
+	
+	var is_moving,
+		self = this;
+		
+	function mousePosToCanvasCoords(e) {
+		
+		var canvas = EViewController.shared().canvas;
+		return {
+			x: e.pageX - canvas.offsetLeft,
+			y: e.pageY - canvas.offsetTop
+		}
+	};
+	
+	canvas.addEventListener("mousemove", function(e) {
+		if (is_moving) {
+			// do something
+		}
+	}, false);
+	document.body.addEventListener("mouseup", function(e) {
+		is_moving = false;
+	}, false);
+	canvas.addEventListener("mousedown", function(e) {
+		is_moving = true;
+		// to get mouse pos on canvas > mousePosToCanvasCoords(e)
+	}, false);
+	
+	
 	return this;
 	
 }
 
-GameScene.prototype.update = function() {}
+GameScene.prototype.update = function() {
+	
+}
 
 GameScene.prototype.render = function() {
 	
