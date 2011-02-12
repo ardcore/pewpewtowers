@@ -92,11 +92,13 @@ GameScene.prototype.update = function(dt) {
 		}
 	}
 	
-	for (var i = 0, n = this.explosions.length; i < n; i++) {
+	for (var i = 0; i < this.explosions.length; i++) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt)) {
 			this.map.addDestruction(explosion.pos, explosion.radius);
+			console.log(this.explosions.length)
 			this.explosions.splice(i--, 1);
+			console.log(this.explosions.length)
 		} 
 	}
 }
