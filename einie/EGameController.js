@@ -35,9 +35,10 @@ EGameController.prototype.init = function() {
 	
 	this.view_controller = EViewController.shared();
 	
+	this.scenes.menu_scene = MenuScene;
 	this.scenes.game_scene = GameScene;
 	
-	this.changeSceneTo('game_scene');
+	this.changeSceneTo('menu_scene');
 	
 	return this;
 	
@@ -58,6 +59,10 @@ EGameController.prototype.renderCurrentScene = function() {
 
 
 EGameController.prototype.changeSceneTo = function(scene_name) {
+	
+	if(this.current_scene) {
+		this.current_scene.onUnload();
+	}
 	
 	this.current_scene = new this.scenes[scene_name]();
 	

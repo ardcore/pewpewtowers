@@ -1,5 +1,9 @@
+<!doctype HTML>
 <html>
 	<head>
+		
+		<link href="resources/style.css" rel="stylesheet" type="text/css">
+		
 		<script type="text/javascript" src="einie/Einie.js"></script>
 		<script type="text/javascript" src="einie/EConfig.js"></script>
 		<script type="text/javascript" src="einie/EHelpers.js"></script>
@@ -22,32 +26,20 @@
 		<script type="text/javascript" src="scorch/Bullet.js"></script>
 		<script type="text/javascript" src="scorch/Tower.js"></script>
 		<script type="text/javascript" src="scorch/Map.js"></script>
+		<script type="text/javascript" src="scorch/MenuScene.js"></script>
 		<script type="text/javascript" src="scorch/GameScene.js"></script>
-		
-		<style>
-			body { font: 15px/1.5 helvetica, arial; }
-			h1 { width: 960px; margin: 20px auto 0; }
-			#Einie { margin: 20px auto 40px; display: block; background: lightBlue url(resources/eifle.png) no-repeat 50px 30%; }
-			#fps-console { position: absolute; top: 65px; left: 50%; margin-left: 400px; }
-			#i-love-walking-along-the-sea-shore, #and-listen-to-the-seaguls-crying-for-attention { width: 960px; height: 63px; margin: 0 auto; position: relative; z-index: 10; }
-			#i-love-walking-along-the-sea-shore { background: url(resources/bg1.png) no-repeat; -webkit-animation:ahoy-sailor 4s infinite; margin-top: -48px; }
-			#and-listen-to-the-seaguls-crying-for-attention { background: url(resources/bg2.png) no-repeat; -webkit-animation:ahoy-sailor-from-the-back 4s infinite; margin-top: -88px; }
-			@-webkit-keyframes ahoy-sailor {
-				0% { background-position: 0 5px; }
-				50% { background-position: 0 0; }
-				100% { background-position:  0 5px; }
-			}
-			
-			@-webkit-keyframes ahoy-sailor-from-the-back {
-				0% { background-position: 0 0; }
-				50% { background-position: 0 5px; }
-				100% { background-position:  0 0; }
-			}
-		</style>
 	</head>
 	<body>
-		<h1>Pew pew towers!</small></h1>
+		<!-- <h1>Pew pew towers!</small></h1> -->
 		<canvas id="Einie" width="960" height="480"></canvas>
+		<div id="pewpewtowers-menu">
+			<h1>PEW! PEW!<br>TOWERS!</h1>
+			<div>
+				<p>Select number of players (2-8)</p>
+				<input type="number" min="2" max="8" value="2" id="pewpewtowers-count">
+			</div>
+			<div><button id="pewpewtowers-start">Enter the fight!</button></div>
+		</div>
 		<div id="and-listen-to-the-seaguls-crying-for-attention"></div>
 		<div id="i-love-walking-along-the-sea-shore"></div>
 		<div id="fps-console"></div>

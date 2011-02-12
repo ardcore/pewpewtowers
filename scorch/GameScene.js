@@ -19,7 +19,7 @@ GameScene.prototype.init = function(players_count) {
 	effie.applyTo(effieTarget).startTimer();
 
 	
-	if(!players_count) players_count = 5;
+	if(!players_count) players_count = EGameController.shared().players_count || 2;
 	var screen = EViewController.shared().size,
 		canvas = EViewController.shared().canvas;
 		
