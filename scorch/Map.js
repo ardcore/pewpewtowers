@@ -51,12 +51,15 @@ Map.prototype.generateMap = function() {
 
 Map.prototype.addDestruction = function(pos, r) {
 	this.update_collision_map = true;
-	var x = pos.x - r;
-	var y = pos.y - r;
+	var screen = EViewController.shared().size;
+		x = pos.x - r,
+		y = pos.y - r,
+		w = h = 2 * r;
 	if(x < 0) x = 0;
 	if(y < 0) y = 0;
-	// todo nie pozwolic kopiowac pikseli z poza canvasa dol + prawo (lewo/gora zrobione) powoduje crasha :)
-	this.update_collision_map_area = {x: x, y: y, w: r * 2, h: r * 2};
+	if(x + w > screen.width) w = screen.width;
+	if(y + h > screen.height) h = screen.height;
+	this.update_collision_map_area = {x: x, y: y, w: w, h: h};
 	this.destroyed_areas.push({x: pos.x, y: pos.y, r: r});
 }
 
@@ -119,13 +122,13 @@ Map.prototype.render = function() {
 	ctx.globalCompositeOperation = 'destination-over';
 	ctx.fillStyle = "#063100";
 	ctx.beginPath();
-	ctx.moveTo(this.map[0].x, this.map[0].y);
+	ctx.moveTo(this.map[0].x, this.map[0].y + 10);
 	
 	for (var i = 1, n = this.map.length; i < n; i++) {
-		ctx.lineTo(this.map[i].x, this.map[i].y);
+		ctx.lineTo(this.map[i].x, this.map[i].y + 10);
 	}
 	
-	ctx.lineTo(screen.width, screen.height);
+	ctx.lineTo(screen.width, screen.height + 10);
 	ctx.lineTo(0, screen.height);
 	ctx.fill();
 	
