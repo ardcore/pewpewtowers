@@ -6,17 +6,20 @@ function Map() {
 	this.width;
 	this.height;
 	this.map = [];
+	this.destroyed_areas = [];
 }
 
 Map.prototype.init = function(width, height) {
 	
 	var view_controller = EViewController.shared();
+	this.update_collision_map = false;
 	
 	this.width = width;
 	this.height = height;
 	
 	this.generateMap();
-	
+	// dummy data
+	this.destroyed_areas = [{x: 120, y: 120, r: 50 }, {x: 290, y: 190, r: 50 }, { x: 490, y: 310, r: 50}, { x: 720, y: 250, r: 50 }];
 	// store image data for pixel collision detection
 	view_controller.clear();
 	this.render();
@@ -53,7 +56,7 @@ Map.prototype.collidesWith = function(object) {
 		x = object.pos.x,
 		y = object.pos.y;
 		
-	return (this.map_image_data.data[x + 3 + y * screen.width * 4] > 0) ? true : false;
+	return (this.map_image_data.data[x * 4 + 3 + y * screen.width * 4] > 0) ? true : false;
 	
 }
 
@@ -62,8 +65,8 @@ Map.prototype.findYPosition = function(object) {
 	var screen = EViewController.shared().size,
 		x = object.pos.x;	
 
-	for (var i = 0, n = screen.height; i < n; i++) {
-		var pixel_alpha = this.map_image_data.data[x + 3 + i * screen.width * 4];
+	for (var i = 0, n = screen.height - 1; i < n; i++) {
+		var pixel_alpha = this.map_image_data.data[x * 4 + 3 + i * screen.width * 4];
 		if(pixel_alpha == 0) continue;
 		return i;
 	}
@@ -74,8 +77,9 @@ Map.prototype.render = function() {
 	var ctx = EViewController.shared().context,
 		screen = EViewController.shared().size;		
 	
-	ctx.fillStyle = "#4da633";
 	
+	// draw collidable terrain
+	ctx.fillStyle = "#4da633";
 	ctx.beginPath();
 	ctx.moveTo(this.map[0].x, this.map[0].y);
 	
@@ -86,4 +90,36 @@ Map.prototype.render = function() {
 	ctx.lineTo(screen.width, screen.height);
 	ctx.lineTo(0, screen.height);
 	ctx.fill();
+	
+	ctx.globalCompositeOperation = 'destination-out';
+	
+	ctx.fillStyle = "#000000";
+	for (var i = 0, n = this.destroyed_areas.length; i < n; i++) {
+		var destruction = this.destroyed_areas[i];
+		ctx.beginPath();
+		ctx.arc(destruction.x, destruction.y, destruction.r, 0, Math.PI * 2);
+		ctx.fill();
+	}
+	
+	if (this.update_collision_map) {
+		this.update_collision_map = false;
+		this.map_image_data = view_controller.context.getImageData(0, 0, screen.width, screen.height);
+	}
+	
+	// draw background terrain
+	ctx.globalCompositeOperation = 'destination-over';
+	ctx.fillStyle = "#063100";
+	ctx.beginPath();
+	ctx.moveTo(this.map[0].x, this.map[0].y);
+	
+	for (var i = 1, n = this.map.length; i < n; i++) {
+		ctx.lineTo(this.map[i].x, this.map[i].y);
+	}
+	
+	ctx.lineTo(screen.width, screen.height);
+	ctx.lineTo(0, screen.height);
+	ctx.fill();
+	
+	ctx.globalCompositeOperation = 'source-over';
+
 }

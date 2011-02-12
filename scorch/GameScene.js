@@ -23,7 +23,6 @@ GameScene.prototype.init = function(players_count) {
 		var player = new Tower().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 , y: 0 });
 		player.pos.y = this.map.findYPosition(player);
 		this.players.push(player);
-		
 	}
 	
 	return this;
