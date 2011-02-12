@@ -27,7 +27,7 @@ GameScene.prototype.init = function(players_count) {
 	this.map = new Map().init(screen.width, screen.height);
 	
 	// set worl gravity
-	this.gravity = { x: 0, y: 20 };
+	this.gravity = { x: 0, y: 40 };
 	
 	// calculate horizontal placing area of player's tower
 	player_pos_step = screen.width / players_count;
@@ -60,11 +60,13 @@ GameScene.prototype.init = function(players_count) {
 	
 	canvas.addEventListener("mousemove", function(e) {
 		var mousePos = mousePosToCanvasCoords(e);
-		self.activePlayer.updateRifleAngle(mousePos);
+		if(self.activePlayer) {
+			self.activePlayer.updateRifleAngle(mousePos);
+		}
 	}, false);
 
 	canvas.addEventListener("mouseup", function(e) {
-		if (!self.activePlayer.did_shot) {
+		if (!self.activePlayer.did_shot && self.activePlayer.isCharging) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
@@ -95,14 +97,26 @@ GameScene.prototype.update = function(dt) {
 
 	if (this.activePlayer && !this.activePlayer.did_shot && this.activePlayer.readyToShoot) {
 		this.bullets.push(this.activePlayer.shot());
-		self.nextPlayer();
+		this.nextPlayer();
 		
 		this.activePlayer.readyToShoot = false;
 		this.chargedFor = 0;		
 	}
 
 	for (var i = 0; i < this.players.length; i++) {
-		this.players[i].update(dt);
+		var player = this.players[i];
+		switch(player.update(dt)) {
+			case ACTION.IS_FALLING:
+				var target_pos = this.map.findYPosition(player)
+				if (player.pos.y >= target_pos) {
+					player.stoppedFalling(target_pos);
+				} 
+				break;
+			case ACTION.OUT_OF_BOUNDS:
+				console.log(player, 'is dead! sorry :(');
+				this.players.splice(i--, 1);
+				break;
+		}
 	}
 	
 	for (var i = 0, bullet; i < this.bullets.length; i++) {
@@ -111,13 +125,23 @@ GameScene.prototype.update = function(dt) {
 		if(this.map.collidesWith(bullet)) {
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
 			this.bullets.splice(i--, 1);
+		} else if(bullet.boundsCheck()) {
+			this.bullets.splice(i--, 1);
 		}
 	}
 	
 	for (var i = 0; i < this.explosions.length; i++) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt)) {
-			console.log(explosion.pos)
+			for (var j = 0, n = this.players.length; j < n; j++) {
+				var player = this.players[j],
+					damage;
+					
+				if (damage = explosion.hitTower(player)) {
+					player.gotHit(damage);
+					// handle after hit action - create smoke etc
+				}
+			}
 			this.map.addDestruction(explosion.pos, explosion.radius);
 			var explosionEffect = effie.createEffect(effie.effects.chaos, [explosion.pos.x, explosion.pos.y]);
 			explosionEffect.radius = explosion.radius;
@@ -156,6 +180,10 @@ GameScene.prototype.nextPlayer = function() {
 	var origin = this.getActivePlayer();
 	var next = this.players[origin.index + 1] || this.players[0];
 	this.activePlayer = next;
+	
+	// todo handle no more players
+	if(!next) return console.log('GAME OVER')
+	
 	next.beginTurn();
 //	next.isActive = true;
 //	next.did_shot = false;

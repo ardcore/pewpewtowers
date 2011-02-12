@@ -44,6 +44,27 @@ ESize.prototype.init = function(width, height) {
 	
 }
 
+ECollisions = {
+	pointsDistance: function(pointA, pointB) {
+		return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
+	},
+	circleRectCollision: function(circle, rect) { // simplified 
+		return (this.rectPointCollision(rect, circle.pos) // rect contains the circle center
+			 || (this.circlePointCollision(circle, { x: rect.pos.x, y: rect.pos.y }))  // circle contains top left corner of rect
+			  || (this.circlePointCollision(circle, { x: rect.pos.x + rect.size.width, y: rect.pos.y}))  // circle contains the top right corner
+			   || (this.circlePointCollision(circle, { x: rect.pos.x, y: rect.pos.y + rect.size.height}))  // c contains the bottom left corner
+			    || (this.circlePointCollision(circle, { x: rect.pos.x + rect.size.width, y: rect.pos.y + rect.size.height }))); // c ontains the bottom right corner
+			
+	},
+	circlePointCollision: function(circle, point) {
+		return this.pointsDistance(circle.pos, point) <= circle.radius;
+	},
+	rectPointCollision: function(rect, point) {
+		return ((point.x >= rect.pos.x && point.x <= rect.pos.x + rect.size.width) 
+		        && (point.y >= rect.pos.y && point.y <= rect.pos.y + rect.size.height));
+	}
+}
+
 
 /*
  * log

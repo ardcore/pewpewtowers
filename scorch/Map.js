@@ -127,7 +127,7 @@ Map.prototype.render = function() {
 	
 	// draw background terrain
 	ctx.globalCompositeOperation = 'destination-over';
-	ctx.fillStyle = "#063100";
+	ctx.fillStyle = "#31564d";
 	ctx.beginPath();
 	ctx.moveTo(this.map[0].x, this.map[0].y + 20);
 	
