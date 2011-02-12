@@ -2,7 +2,7 @@
  * TOWER
  */
 
-var ACTION = {
+var PLAYER_ACTION = {
 	FALLING: 1,
 	OUT_OF_BOUNDS: 2
 }
@@ -117,10 +117,10 @@ Tower.prototype.update = function(dt) {
 		this.pos.y += this.v.y * dt;
 		
 		if(this.pos.y - this.size.height + 3 > screen.height) {
-			return ACTION.OUT_OF_BOUNDS;
+			return PLAYER_ACTION.OUT_OF_BOUNDS;
 		}
 		
-		return ACTION.IS_FALLING;
+		return PLAYER_ACTION.IS_FALLING;
 	}
 }
 

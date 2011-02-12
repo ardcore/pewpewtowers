@@ -99,13 +99,13 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		switch(player.update(dt)) {
-			case ACTION.IS_FALLING:
+			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if (player.pos.y >= target_pos) {
 					player.stoppedFalling(target_pos);
 				} 
 				break;
-			case ACTION.OUT_OF_BOUNDS:
+			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
 				this.players.splice(i--, 1);
 				break;
