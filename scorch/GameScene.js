@@ -107,6 +107,11 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		switch(player.update(dt)) {
+
+			case PLAYER_ACTION.IS_DEAD:
+				this.players[i].burnEffect.stopEffect();
+				this.players.splice(i--, 1);			
+				break;
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if (player.pos.y >= target_pos) {
@@ -170,22 +175,28 @@ GameScene.prototype.render = function() {
 
 // returns random player
 GameScene.prototype.getRandomPlayer = function() {
-	return arrayRand(this.players);
+	return this.players.sort(function() {return 0.5 - Math.random()})[0];
 }
 
 // loops through players collection getting next one
-GameScene.prototype.nextPlayer = function() {
-	var origin = this.getActivePlayer();
-	var next = this.players[origin.index + 1] || this.players[0];
+
+GameScene.prototype.nextPlayer = function(active_died) {
+	var next;
+
+	if(!active_died) {
+		this.activePlayer.isActive = false;
+		this.players.push(this.players.shift())
+		next = this.players[0];
+	} else {
+		next = this.players[0];
+	}
+
 	this.activePlayer = next;
-	
+
 	// todo handle no more players
 	if(!next) return console.log('GAME OVER')
-	
+
 	next.beginTurn();
-//	next.isActive = true;
-//	next.did_shot = false;
-	origin.isActive = false;
 }
 
 // returns currently active player
