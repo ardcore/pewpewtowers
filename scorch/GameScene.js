@@ -49,11 +49,10 @@ GameScene.prototype.init = function(players_count) {
 	
 	canvas.addEventListener("mousemove", function(e) {
 		if (is_moving) {
+			
 		} else {
-			var playerPos = that.activePlayer.pos;
 			var mousePos = mousePosToCanvasCoords(e);
-			var angle = Math.atan2((playerPos.y - mousePos.y), (playerPos.x - mousePos.x))
-			that.activePlayer.rifle.angle = angle;
+			self.activePlayer.updateRifleAngle(mousePos);
 		}
 
 	}, false);
@@ -71,6 +70,11 @@ GameScene.prototype.init = function(players_count) {
 }
 
 GameScene.prototype.update = function(dt) {
+	
+	for (var i = 0; i < this.players.length; i++) {
+		this.players[i].update(dt);
+	}
+	
 	for (var i = 0; i < this.explosions.length;) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt) == true) {
@@ -88,9 +92,9 @@ GameScene.prototype.render = function() {
 	this.map.render();
 
 	for (var i = 0; i < this.players.length; i++) {
-		this.players[i].update();
 		this.players[i].render();
 	}
+	
 	for (var i = 0, n = this.explosions.length; i < n; i++) {
 		this.explosions[i].render();
 	}
