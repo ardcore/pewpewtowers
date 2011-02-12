@@ -282,7 +282,7 @@ effie = (function() {
 				addParticle: function() {
 
 					if (objToFollow) {
-						coords = [objToFollow.pos.x, objToFollow.pos.y];
+						coords = [objToFollow.pos.x, objToFollow.pos.y - objToFollow.size.height];
 					} else {
 
 						if (typeof emitter == "function") {
@@ -298,7 +298,7 @@ effie = (function() {
 				startEffect: function() {
 					clearMode = effect.clearMode;
 					if (objToFollow) {
-						emitter = [objToFollow.pos.x, objToFollow.pos.y]
+						emitter = [objToFollow.pos.x + objToFollow.size.width/2, objToFollow.pos.y - objToFollow.size.height];
 					} else {
 						emitter = coords || effect.emitterCoords || [effie.data.halfw, effie.data.halfh];
 					}

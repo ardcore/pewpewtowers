@@ -102,7 +102,7 @@ Tower.prototype.gotHit = function(damage) {
 	console.log(this, 'got hit');
 
 	if (this.is_burning) {
-		this.burnEffect.count = this.burnEffect.count*2;
+		this.burnEffect.count = this.burnEffect.count*1.2;
 	} else {
 		var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
 		burnEffect.startEffect();
