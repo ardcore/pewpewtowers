@@ -64,6 +64,7 @@ GameScene.prototype.init = function(players_count) {
 			self.activePlayer.isCharging = false;
 			// shot bullet
 			self.bullets.push(self.activePlayer.shot());
+			self.nextPlayer();			
 		}
 		
 	}, false);
@@ -146,7 +147,9 @@ GameScene.prototype.nextPlayer = function() {
 	var origin = this.getActivePlayer();
 	var next = this.players[origin.index + 1] || this.players[0];
 	this.activePlayer = next;
-	next.isActive = true;
+	next.beginTurn();
+//	next.isActive = true;
+//	next.did_shot = false;
 	origin.isActive = false;
 }
 
