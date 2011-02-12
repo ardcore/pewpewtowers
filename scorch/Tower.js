@@ -10,8 +10,6 @@ function Tower() {
 Tower.prototype.init = function(pos) {
 	
 	var screen = EViewController.shared().size;
-	
-	this.is_placed = false;
 	this.pos = pos;
 	
 	return this;
@@ -20,9 +18,6 @@ Tower.prototype.init = function(pos) {
 
 Tower.prototype.update = function(dt) {
 	
-	if(!this.is_placed) {
-		// drop on the ground 
-	}
 }
 
 Tower.prototype.render = function() {
