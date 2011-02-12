@@ -41,7 +41,8 @@ GameScene.prototype.init = function(players_count) {
 	// SUPER HACKY MOUSE SUPPORT
 	
 	var is_moving,
-		self = this;
+		self = this,
+		mouseDownTimeStamp;
 		
 	function mousePosToCanvasCoords(e) {
 		
@@ -53,24 +54,23 @@ GameScene.prototype.init = function(players_count) {
 	};
 	
 	canvas.addEventListener("mousemove", function(e) {
-		if (is_moving) {
-			
-		} else {
-			var mousePos = mousePosToCanvasCoords(e);
-			self.activePlayer.updateRifleAngle(mousePos);
-		}
-
+		var mousePos = mousePosToCanvasCoords(e);
+		self.activePlayer.updateRifleAngle(mousePos);
 	}, false);
 
 	document.body.addEventListener("mouseup", function(e) {
 		is_moving = false;
-		
+		self.activePlayer.isCharging = false;
+
 		// shot bullet
 		self.bullets.push(self.activePlayer.shot());
 		
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
 		is_moving = true;
+		self.activePlayer.isCharging = true;
+		self.activePlayer.chargedFor = 0;
+		self.activePlayer.chargeStart = +new Date();
 	}, false);
 	
 	return this;
@@ -78,7 +78,12 @@ GameScene.prototype.init = function(players_count) {
 }
 
 GameScene.prototype.update = function(dt) {
-	
+
+	if (this.activePlayer && this.activePlayer.isCharging) {
+		var chargeTime = +new Date() - this.activePlayer.chargeStart;
+		this.activePlayer.setChargedFor( chargeTime );
+	}
+
 	for (var i = 0; i < this.players.length; i++) {
 		this.players[i].update(dt);
 	}

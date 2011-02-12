@@ -5,6 +5,10 @@
 function Tower() {
 	this.index;
 	this.isActive;
+	this.isCharging = false;
+	this.chargeStart = 0;
+	this.chargedFor = 0;
+
 	this.pos = {};
 	this.size = {
 		width:10,
@@ -18,10 +22,24 @@ function Tower() {
 		height: 4,
 		color: "black"
 	}
-	
+
+	this.powerbar = {
+		width: 2,
+		color: "red",
+		height: 0,
+		maxCharge: 2000
+	}
+
 	this.bullet = {
 		v: 100, // px/s
 		r: 75
+	}
+
+}
+
+Tower.prototype.setChargedFor = function(time) {
+	if (time <= this.powerbar.maxCharge) {
+		this.chargedFor = time;
 	}
 }
 
@@ -34,10 +52,11 @@ Tower.prototype.init = function(pos, index) {
 }
 
 Tower.prototype.shot = function() {
+	var vel = this.chargedFor / 10;
 	var pos = {};
 	pos.x = this.pos.x + -Math.cos(this.rifle.angle) * this.rifle.width;
 	pos.y = this.pos.y - this.size.height / 2 + 3 + -Math.sin(this.rifle.angle) * this.rifle.width;
-	return new Bullet().init(pos, this.rifle.angle, this.bullet.v, this.bullet.r);
+	return new Bullet().init(pos, this.rifle.angle, vel, this.bullet.r);
 }
 
 Tower.prototype.updateRifleAngle = function(mouse_pos) {
@@ -52,6 +71,10 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 	
 	this.rifle.angle = angle;
 	
+}
+
+Tower.prototype.increasePowerTo = function(timeHeld) {
+console.log('increasing to ' + timeHeld)
 }
 
 Tower.prototype.update = function(dt) {
@@ -78,6 +101,12 @@ Tower.prototype.render = function() {
 				  -this.rifle.width, -this.rifle.height);
 	ctx.restore();
 	if (this.isActive) {
+
+		this.powerbar.height = this.chargedFor/50;
+
+		ctx.fillStyle = this.powerbar.color;
+		ctx.fillRect(this.pos.x + this.size.width*1.2, this.pos.y - this.powerbar.height,
+					 this.powerbar.width, this.powerbar.height);
 		ctx.beginPath();
 		ctx.arc(center.x, center.y, 20, 0, Math.PI*2);
 		ctx.stroke();
