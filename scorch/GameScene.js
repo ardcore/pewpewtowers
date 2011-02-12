@@ -42,8 +42,10 @@ GameScene.prototype.init = function(players_count) {
 
 	// randomize starting player
 	this.setActivePlayer( this.getRandomPlayer() );
-	this.activePlayer.beginTurn();
-	
+	this.activePlayer.beginTurn();	
+	this.timer = new Timer("timer", 20000, 50, function() {  }, "blue", "pink");
+	this.timer.setTimeLeft(20000);
+
 	// SUPER HACKY MOUSE SUPPORT
 	
 	var is_moving,
