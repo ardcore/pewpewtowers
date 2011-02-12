@@ -28,10 +28,24 @@
 		
 		<style>
 			body { font: 15px/1.5 helvetica, arial; }
-			h1 { width: 960px; margin: 0 auto; }
-			#Einie { margin: 40px auto; display: block; background: lightBlue url(resources/eifle.png) no-repeat 50px 30%; }
+			h1 { width: 960px; margin: 20px auto 0; }
+			#Einie { margin: 20px auto 40px; display: block; background: lightBlue url(resources/eifle.png) no-repeat 50px 30%; }
 			#fps-console { position: absolute; top: 65px; left: 50%; margin-left: 400px; }
-            #timer {
+			#i-love-walking-along-the-sea-shore, #and-listen-to-the-seaguls-crying-for-attention { width: 960px; height: 63px; margin: 0 auto; position: relative; z-index: 10; }
+			#i-love-walking-along-the-sea-shore { background: url(resources/bg1.png) no-repeat; -webkit-animation:ahoy-sailor 4s infinite; margin-top: -48px; }
+			#and-listen-to-the-seaguls-crying-for-attention { background: url(resources/bg2.png) no-repeat; -webkit-animation:ahoy-sailor-from-the-back 4s infinite; margin-top: -88px; }
+			@-webkit-keyframes ahoy-sailor {
+				0% { background-position: 0 5px; }
+				50% { background-position: 0 0; }
+				100% { background-position:  0 5px; }
+			}
+			
+			@-webkit-keyframes ahoy-sailor-from-the-back {
+				0% { background-position: 0 0; }
+				50% { background-position: 0 5px; }
+				100% { background-position:  0 0; }
+			}
+             #timer {
                 position: absolute; top: 120px; left: 50%; margin-left: 400px;
             }
 		</style>
