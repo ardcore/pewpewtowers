@@ -66,8 +66,8 @@ Map.prototype.addDestruction = function(pos, r) {
 Map.prototype.collidesWith = function(object) {
 	
 	var screen = EViewController.shared().size,
-		x = object.pos.x,
-		y = object.pos.y;
+		x = Math.round(object.pos.x),
+		y = Math.round(object.pos.y);
 		
 	return (this.map_image_data.data[x * 4 + 3 + y * screen.width * 4] > 0) ? true : false;
 	
@@ -115,7 +115,7 @@ Map.prototype.render = function() {
 	}
 	
 	if (this.update_collision_map) {
-		this.map_image_data = ctx.getImageData(this.update_collision_map_area.x, this.update_collision_map_area.y, this.update_collision_map_area.w, this.update_collision_map_area.h);
+		//this.map_image_data = ctx.getImageData(this.update_collision_map_area.x, this.update_collision_map_area.y, this.update_collision_map_area.w, this.update_collision_map_area.h);
 	}
 	
 	// draw background terrain
@@ -136,6 +136,6 @@ Map.prototype.render = function() {
 
 	if (this.update_collision_map) {
 		this.update_collision_map = false;
-		ctx.putImageData(this.map_image_data, this.update_collision_map_area.x, this.update_collision_map_area.y);
+		//ctx.putImageData(this.map_image_data, this.update_collision_map_area.x, this.update_collision_map_area.y);
 	}
 }

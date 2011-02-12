@@ -20,7 +20,7 @@ function Tower() {
 	}
 	
 	this.bullet = {
-		v: 20,
+		v: 100, // px/s
 		r: 75
 	}
 }

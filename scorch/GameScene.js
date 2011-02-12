@@ -3,6 +3,7 @@ GameScene.prototype.constructor = GameScene;
 
 function GameScene() {
 	this.map;
+	this.gravity;
 	this.players = [];
 	this.activePlayer;
 	this.explosions = [];
@@ -19,6 +20,9 @@ GameScene.prototype.init = function(players_count) {
 		
 	// create new map
 	this.map = new Map().init(screen.width, screen.height);
+	
+	// set worl gravity
+	this.gravity = { x: 0, y: 20 };
 	
 	// calculate horizontal placing area of player's tower
 	player_pos_step = screen.width / players_count;
@@ -67,7 +71,6 @@ GameScene.prototype.init = function(players_count) {
 	}, false);
 	canvas.addEventListener("mousedown", function(e) {
 		is_moving = true;
-		self.explosions.push(new Explosion().init(mousePosToCanvasCoords(e), 50, 2));
 	}, false);
 	
 	return this;
@@ -80,14 +83,21 @@ GameScene.prototype.update = function(dt) {
 		this.players[i].update(dt);
 	}
 	
-	for (var i = 0; i < this.explosions.length;) {
-		var explosion = this.explosions[i];
-		if (explosion.update(dt) == true) {
-			this.map.addDestruction(explosion.pos, explosion.radius);
-			this.explosions.splice(i, 1)
-		} else {
-			i++;
+	for (var i = 0, bullet; i < this.bullets.length; i++) {
+		bullet = this.bullets[i];
+		bullet.update(dt);
+		if(this.map.collidesWith(bullet)) {
+			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
+			this.bullets.splice(i--, 1);
 		}
+	}
+	
+	for (var i = 0, n = this.explosions.length; i < n; i++) {
+		var explosion = this.explosions[i];
+		if (explosion.update(dt)) {
+			this.map.addDestruction(explosion.pos, explosion.radius);
+			this.explosions.splice(i--, 1);
+		} 
 	}
 }
 
