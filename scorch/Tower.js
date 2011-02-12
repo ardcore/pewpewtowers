@@ -39,6 +39,15 @@ function Tower() {
 
 }
 
+Tower.prototype.beginTurn = function() {
+	this.isActive = true;
+	this.isCharging = false;
+	this.chargeStart = 0;
+	this.chargedFor = 0;
+	this.readyToShoot = false;
+	this.did_shot = false;
+}
+
 Tower.prototype.setChargedFor = function(time) {
 	if (time <= this.powerbar.maxCharge) {
 		this.chargedFor = time;
