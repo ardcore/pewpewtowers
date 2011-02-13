@@ -15,6 +15,21 @@ effie.effects = {
 		clearMode: "full" // not supported
 	},
 
+	wzium: {
+		duration: 1000, // duration of effect
+		count: 100, // particle count
+		degradation: .95, // related to velocity
+		velX: '-15..15', // random in range
+		velY: '-15..15',
+		sizeX: 2, // px
+		sizeY: 2,
+		longevity: '10..20',
+		falldown: '0.995..0.999',
+		color: "orange",
+		emitterCoords: [200,200],
+		clearMode: "full" // not supported
+	},
+
 	scorchfire: {
 		name: 'scorchfire',
 		shape: 'circle',

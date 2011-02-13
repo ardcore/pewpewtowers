@@ -14,6 +14,7 @@ function Bullet() {
 	this.degradation;
 	this.isFollowed;
 	this.life_time;
+	this.size;
 }
 
 Bullet.prototype.init = function(pos, angle, v, r) {
@@ -27,7 +28,12 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	this.power = 1;
 	this.degradation = .99999;
 	this.isFollowed = false;
+	this.size = {
+		width: 2,
+		height: 2
+	}
 	return this;
+	
 }
 
 Bullet.prototype.boundsCheck = function(pos, angle, v, r) {

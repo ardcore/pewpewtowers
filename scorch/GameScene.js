@@ -14,6 +14,9 @@ function GameScene() {
 	this.resources = ['cityscape.mp3','final.wav','shot.wav','explosion.wav',
 	'drown.wav','damage.wav'];
 
+	var wl = document.getElementById("i-love-walking-along-the-sea-shore");
+	var cheight = EViewController.shared().size.height;
+	this.waterLevel	=  cheight- (wl.offsetHeight/2);
 
 }
 
@@ -99,7 +102,9 @@ GameScene.prototype.init = function(players_count) {
 			is_moving = false;
 			self.activePlayer.isCharging = false;
 			// shot bullet
-			self.bullets.push(self.activePlayer.shot());
+			var bullet = self.activePlayer.shot();
+			self.bullets.push(bullet);
+			effie.createEffect(effie.effects.wzium, null, bullet).startEffect();
 			self.nextPlayer();
 			self.playSound('shot.wav', false);
 		}
@@ -157,6 +162,11 @@ GameScene.prototype.update = function(dt) {
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if(target_pos === false) {
+
+					if (player.pos.y > this.waterLevel) {
+//						player.startDrowning();
+//						effie.createEffect(effie.effects.splash, [player.pos.x, player.pos.y]).startEffect();
+					}
 					// TODO
 					// SZymek dodaj sobie tu chlup i bulbul - 
 					// sprawdz na jakiej wysokosci zaczyna sie woda +/- 
@@ -171,6 +181,7 @@ GameScene.prototype.update = function(dt) {
 				console.log(player, 'is dead! sorry :(');
 				this.playSound('drown.wav');
 				this.players.splice(i--, 1);
+
 				if(player == this.activePlayer) { // TOFIX
 					this.nextPlayer();
 				}			

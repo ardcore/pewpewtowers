@@ -18,6 +18,7 @@ function Tower() {
 	this.did_shot = false;
 	this.burnEffect = null;
 	this.is_dead = false;
+	this.is_drowning = false;
 
 	this.pos = {};
 	this.size = {
@@ -115,6 +116,13 @@ Tower.prototype.stoppedFalling = function(y_pos) {
 	this.pos.y = y_pos;
 	this.v.y = 0;
 	this.is_falling = false;
+}
+
+Tower.prototype.startDrowning = function() {
+	if (!this.is_drowning) {
+		this.v.y = this.v.y/2;
+		this.is_drowning = true;
+	}
 }
 
 Tower.prototype.update = function(dt) {
