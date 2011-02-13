@@ -261,9 +261,9 @@ effie = (function() {
 				i++;					
 
 			}
-			ctx.fillStyle = "white";
-			ctx.globalAlpha = 1;
-			ctx.fillText(effie.ticker.fps | 0, 10, 10, 30);
+			//ctx.fillStyle = "white";
+			//ctx.globalAlpha = 1;
+			//ctx.fillText(effie.ticker.fps | 0, 10, 10, 30);
 		},
 
 		createEffect: function(effect, coords, objToFollow) {
