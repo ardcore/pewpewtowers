@@ -1,6 +1,6 @@
 var LABELS = {
 	TOWER_HIT: ["Ouch!", "That hurt!", "Don't do that!", "Why me?", "Noooo...", "Not again..."],
-	PLAYER_WON: ["Balls of steel!", "Easy as a pie.", "I accept that.", "I'm unimpressed."]
+	PLAYER_WON: ["Balls of steel!", "Easy as pie.", "I accept that.", "I'm unimpressed."]
 }
 
 
@@ -75,7 +75,7 @@ GameScene.prototype.init = function(players_count) {
 		this.players.push(player);
 		// add label
 		this.labels.push(new Label().init(
-			{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
+			{x : player.pos.x - player.size.width, y: player.pos.y - player.size.height * 3 }, 
 			 "Player " + (i + 1), 1, "bold 8pt retro", 
 			   null, "center", "middle", null
 			));
@@ -133,16 +133,23 @@ GameScene.prototype.init = function(players_count) {
 
 GameScene.prototype.update = function(dt) {
 
-	if (Math.random() * 100 > 99.5 && this.clouds.length < 4) {
-		this.clouds.push(new Cloud().init());
-	}
-
 	if (this.players.length == 1) {
 		this.gameFinished(this.activePlayer);
 		this.game_ended = true;
+		
+		for (var i = 0; i < this.labels.length; i++) {
+			var label = this.labels[i];
+			if(label.update(dt) == LABEL_ACTION.REMOVE_LABEL) {
+				this.labels.splice(i--, 1);	
+			}
+		}
 		return;
 	}
 
+	if (Math.random() * 100 > 99.5 && this.clouds.length < 4) {
+		this.clouds.push(new Cloud().init());
+	}
+	
 	if (this.activePlayer && this.activePlayer.isCharging) {
 		var chargeTime = +new Date() - this.activePlayer.chargeStart;
 		this.activePlayer.setChargedFor( chargeTime );
@@ -225,10 +232,10 @@ GameScene.prototype.update = function(dt) {
 				if (damage = explosion.hitTower(player)) {
 					player.gotHit(damage);
 					
-					var label_id = ~~(Math.random() * LABELS.TOWER_HIT.length + 0.5);
+					var label_id = Math.round(Math.random() * LABELS.TOWER_HIT.length) - 1;
 					
 					this.labels.push(new Label().init(
-						{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
+						{x : player.pos.x - player.size.width, y: player.pos.y - player.size.height * 3 }, 
 						 LABELS.TOWER_HIT[label_id], 1, "bold 8pt retro", 
 						   null, "center", "middle", null
 						));
@@ -320,7 +327,7 @@ GameScene.prototype.nextPlayer = function(active_died) {
 	this.activePlayer = next;
 
 	this.labels.push(new Label().init(
-		{x : next.pos.x, y: next.pos.y - next.size.height * 3 }, 
+		{x : next.pos.x - next.size.width, y: next.pos.y - next.size.height * 3 }, 
 		 "Player " + (next.index + 1) + " go!", 1, "bold 8pt retro", 
 		   null, "center", "middle", null
 		));
@@ -342,11 +349,11 @@ GameScene.prototype.gameFinished = function(player) {
 	if(this.game_ended) return false;
 	this.playSound('final.wav');
 	
-	var label_id = ~~(Math.random() * LABELS.PLAYER_WON.length + 0.5);
+	var label_id = Math.round(Math.random() * LABELS.PLAYER_WON.length - 1);
 	
 	this.labels.push(new Label().init(
 		{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
-		 LABELS.PLAYER_WON[label_id], 1, "bold 8pt retro", 
+		 LABELS.PLAYER_WON[label_id], 2, "bold 8pt retro", 
 		   null, "center", "middle", null
 		));
 		

@@ -13,7 +13,7 @@ function Label() {
 	this.font;
 }
 
-Label.prototype.init = function(pos, text, time, font, color, align, baseline, deg) {
+Label.prototype.init = function(pos, text, time, font, color, align, baseline, deg, move_up) {
 	this.pos = pos;
 	this.text = text;
 	this.duration = ((time && time.duration) ? time.duration : time) || 2;
@@ -24,6 +24,7 @@ Label.prototype.init = function(pos, text, time, font, color, align, baseline, d
 	this.align = align || "center";
 	this.baseline = baseline || "middle";
 	this.angle = deg || 0;
+	this.move_up = move_up || true;
 	
 	this.life_time = 0;
 	
@@ -39,6 +40,10 @@ Label.prototype.update = function(dt) {
 	
 	if (this.life_time > this.duration) {
 		return LABEL_ACTION.REMOVE_LABEL;
+	}
+	
+	if (this.move_up) {
+		this.pos.y -= dt * 20;
 	}
 	
 }
