@@ -48,10 +48,15 @@ Arrow.prototype.render = function() {
 	ctx.rotate(this.angle);
 	ctx.beginPath();
 	ctx.fillStyle = "orange";
-	ctx.font = "10px arial";
+	ctx.textBaseline = "top";
+    ctx.font = "normal 10pt Arial";
+    ctx.fillStyle = "#333";
 	ctx.fillRect(0, 0, this.size.width, this.size.height);
-	ctx.fillText(this.indicator | 0 + " away", 0, 0, 50);
-	ctx.fill();	
+	ctx.fillText(this.indicator|0, 10, 2, 150);
+	ctx.lineTo(0-this.size.width/2, this.size.height/3);
+	ctx.moveTo(0,0);
+	ctx.lineTo(0+this.size.width/2, this.size.height/3);
+	ctx.fill();
 	ctx.restore();
 
 }
