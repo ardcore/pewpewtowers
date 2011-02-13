@@ -10,6 +10,9 @@ function Bullet() {
 	this.v = {};
 	this.ag;
 	this.r;
+	this.power;
+	this.degradation;
+	this.isFollowed;
 }
 
 Bullet.prototype.init = function(pos, angle, v, r) {
@@ -20,7 +23,9 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	this.v.y = -Math.sin(angle) * v;
 	this.ag = EGameController.shared().current_scene.gravity;
 	this.r = r;
-	
+	this.power = 1;
+	this.degradation = .99999;
+	this.isFollowed = false;
 	return this;
 }
 
@@ -28,10 +33,15 @@ Bullet.prototype.boundsCheck = function(pos, angle, v, r) {
 	return this.pos.y > EViewController.shared().size.height + r;
 }
 
+Bullet.prototype.isAboveScreen = function() {
+	return this.pos.y < 0;
+}
 Bullet.prototype.update = function(dt) {
+
+	this.power = this.power * this.degradation;
 	var screen = EViewController.shared().size;
-	this.v.x = this.v.x + this.ag.x * dt;
-	this.v.y = this.v.y + this.ag.y * dt;
+	this.v.x = (this.v.x * this.power) + this.ag.x * dt;
+	this.v.y = (this.v.y * this.power) + this.ag.y * dt;
 	this.pos.x += this.v.x * dt;
 	this.pos.y += this.v.y * dt;
 	

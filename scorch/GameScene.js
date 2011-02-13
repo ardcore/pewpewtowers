@@ -8,6 +8,7 @@ function GameScene() {
 	this.activePlayer;
 	this.explosions = [];
 	this.bullets = [];
+	this.arrows = [];
 }
 
 GameScene.prototype.init = function(players_count) {
@@ -147,6 +148,12 @@ GameScene.prototype.update = function(dt) {
 			this.bullets.splice(i--, 1);
 		} else if(bullet.boundsCheck()) {
 			this.bullets.splice(i--, 1);
+		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
+			console.log("not follow")
+			bullet.isFollowed = true;
+			var arr = new Arrow();
+			arr.init(bullet);
+			this.arrows.push(arr);
 		}
 	}
 	
@@ -166,6 +173,16 @@ GameScene.prototype.update = function(dt) {
 			this.explosions.splice(i--, 1);
 		} 
 	}
+
+	for (var i = 0; i < this.arrows.length; i++) {
+		var arrow = this.arrows[i];
+		if (arrow.should_die) {
+			this.arrows.splice(i--, 1);			
+		} else {
+			arrow.update(dt);
+		}
+
+	}
 }
 
 GameScene.prototype.render = function() {
@@ -183,6 +200,10 @@ GameScene.prototype.render = function() {
 	
 	for (var i = 0, n = this.explosions.length; i < n; i++) {
 		this.explosions[i].render();
+	}
+
+	for (var i = 0, n = this.arrows.length; i < n; i++) {
+		this.arrows[i].render();
 	}
 	
 }
