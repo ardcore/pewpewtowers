@@ -194,6 +194,8 @@ GameScene.prototype.update = function(dt) {
 		bullet.update(dt);
 		if(this.map.collidesWith(bullet)) {
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
+			var miniex = effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]);
+			miniex.startEffect();
 			this.bullets.splice(i--, 1);
 			this.playSound('explosion.wav');
 		} else if(bullet.boundsCheck()) {
