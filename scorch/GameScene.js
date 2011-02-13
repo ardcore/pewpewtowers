@@ -71,8 +71,6 @@ GameScene.prototype.init = function(players_count) {
 	// randomize starting player
 	this.setActivePlayer( this.getRandomPlayer() );
 	this.activePlayer.beginTurn();	
-	this.timer = new Timer("timer", 20000, 50, function() {  }, "blue", "pink");
-	this.timer.setTimeLeft(20000);
 
 	// SUPER HACKY MOUSE SUPPORT
 	
@@ -158,17 +156,24 @@ GameScene.prototype.update = function(dt) {
 				break;
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
-				if (player.pos.y >= target_pos) {
+				if(target_pos === false) {
+					// TODO
+					// SZymek dodaj sobie tu chlup i bulbul - 
+					// sprawdz na jakiej wysokosci zaczyna sie woda +/- 
+					// i porownaj player.y jak odpowiednia wysokosc bedzie mial 
+					// zrob efekty - najlepiej obsluz wszystko z poziomu tower nie gamescene
+					console.log('will sink!');
+				} else if (player.pos.y >= target_pos) {
 					player.stoppedFalling(target_pos);
 				} 
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
 				this.playSound('drown.wav');
+				this.players.splice(i--, 1);
 				if(player == this.activePlayer) { // TOFIX
 					this.nextPlayer();
 				}			
-				this.players.splice(i--, 1);
 				break;
 		}
 	}
@@ -183,7 +188,6 @@ GameScene.prototype.update = function(dt) {
 		} else if(bullet.boundsCheck()) {
 			this.bullets.splice(i--, 1);
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
-			console.log("not follow")
 			bullet.isFollowed = true;
 			var arr = new Arrow();
 			arr.init(bullet);

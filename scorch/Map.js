@@ -91,6 +91,8 @@ Map.prototype.findYPosition = function(object) {
 		return i;
 	}
 	
+	return false;
+	
 }
 
 Map.prototype.render = function() {
@@ -99,7 +101,7 @@ Map.prototype.render = function() {
 	
 	
 	// draw collidable terrain
-	ctx.fillStyle = "#6dc253";
+	ctx.fillStyle = "#94d281";
 	ctx.beginPath();
 	ctx.moveTo(this.map[0].x, this.map[0].y);
 	

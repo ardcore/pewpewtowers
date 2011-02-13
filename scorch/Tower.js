@@ -100,7 +100,6 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 
 Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
-	console.log(this, 'got hit');
 	this.hp = this.hp - damage;
 	
 	var smoke = effie.createEffect(effie.effects.scorchsmoke, null, this);

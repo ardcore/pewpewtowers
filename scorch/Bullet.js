@@ -13,6 +13,7 @@ function Bullet() {
 	this.power;
 	this.degradation;
 	this.isFollowed;
+	this.life_time;
 }
 
 Bullet.prototype.init = function(pos, angle, v, r) {
