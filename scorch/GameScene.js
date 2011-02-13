@@ -8,6 +8,7 @@ function GameScene() {
 	this.activePlayer;
 	this.explosions = [];
 	this.bullets = [];
+	this.clouds = [];
 	this.arrows = [];
 }
 
@@ -94,6 +95,10 @@ GameScene.prototype.init = function(players_count) {
 
 GameScene.prototype.update = function(dt) {
 
+	if (Math.random() * 100 > 99.5 && this.clouds.length < 4) {
+		this.clouds.push(new Cloud().init());
+	}
+
 	if (this.players.length == 1) {
 		this.gameFinished(this.activePlayer);
 		this.game_ended = true;
@@ -157,6 +162,13 @@ GameScene.prototype.update = function(dt) {
 		}
 	}
 	
+	for (var i = 0; i < this.clouds.length; i++) {
+		this.clouds[i].update(dt);
+		if(this.clouds[i].boundsCheck()) {
+			this.clouds.splice(i--, 1);
+		}
+	}
+	
 	for (var i = 0; i < this.explosions.length; i++) {
 		var explosion = this.explosions[i];
 		if (explosion.update(dt)) {
@@ -198,6 +210,10 @@ GameScene.prototype.render = function() {
 		this.bullets[i].render();
 	}
 	
+	for (var i = 0; i < this.clouds.length; i++) {
+		this.clouds[i].render();
+	}
+	
 	for (var i = 0, n = this.explosions.length; i < n; i++) {
 		this.explosions[i].render();
 	}
@@ -229,7 +245,9 @@ GameScene.prototype.nextPlayer = function(active_died) {
 	}
 
 	// todo handle no more players
-	if(!next) return console.log('GAME OVER');
+	if (!next) {
+		this.gameFinished({ index: 666});
+	}
 	if(this.players.length == 1) {
 		this.gameFinished(this.activePlayer);
 	}
