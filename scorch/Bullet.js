@@ -63,7 +63,7 @@ Bullet.prototype.render = function() {
 	
 	ctx.fillStyle = "#ff1213";
 	ctx.beginPath();
-	ctx.arc(this.pos.x, this.pos.y, 1.75, 0, Math.PI * 2);
+	ctx.arc(this.pos.x, this.pos.y, 1.75, 0, Math.PI * 2, false);
 	ctx.fill();
 	
 }

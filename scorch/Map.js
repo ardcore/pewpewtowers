@@ -61,7 +61,7 @@ Map.prototype.addDestruction = function(pos, r) {
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.fillStyle = "#000000";
 	ctx.beginPath();
-	ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+	ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2, false);
 	ctx.fill();
 	ctx.restore();
 	
@@ -119,7 +119,7 @@ Map.prototype.render = function() {
 	for (var i = 0, n = this.destroyed_areas.length; i < n; i++) {
 		var destruction = this.destroyed_areas[i];
 		ctx.beginPath();
-		ctx.arc(destruction.x, destruction.y, destruction.r, 0, Math.PI * 2);
+		ctx.arc(destruction.x, destruction.y, destruction.r, 0, Math.PI * 2, false);
 		ctx.fill();
 	}
 	

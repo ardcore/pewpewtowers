@@ -1,7 +1,9 @@
 var LABELS = {
 	TOWER_HIT: ["Ouch!", "That hurt!", "Don't do that!", "Why me?", "Noooo...", "Not again..."],
-	PLAYER_WON: ["Balls of steel!", "Easy as pie.", "I accept that.", "I'm unimpressed."]
-}
+	PLAYER_WON: ["Balls of steel!", "Easy as pie.", "I accept that.", "I'm unimpressed."],
+	PLAYER_IDLE: ["Boring...", "Knock, knock?", "Sleeping?", "I'm waiting...", "What was it?", "*taps his foot*", "*whistles*", "*yawns*"]
+	},
+	IDLE_TIME = 10;
 
 
 GameScene.prototype = new EScene().init();
@@ -17,6 +19,8 @@ function GameScene() {
 	this.clouds = [];
 	this.arrows = [];
 	this.labels = [];
+
+	this.idle_timer;
 
 	this.resources = ['cityscape.mp3','final.wav','shot.wav','explosion.wav',
 	'drown.wav','damage.wav'];
@@ -88,6 +92,8 @@ GameScene.prototype.init = function(players_count) {
 	this.setActivePlayer( this.getRandomPlayer() );
 	this.activePlayer.beginTurn();	
 
+	this.idle_timer = 0;
+
 	// SUPER HACKY MOUSE SUPPORT
 	
 	var is_moving,
@@ -120,6 +126,7 @@ GameScene.prototype.init = function(players_count) {
 			effie.createEffect(effie.effects.wzium, null, bullet).startEffect();
 			self.nextPlayer();
 			self.playSound('shot.wav', false);
+			self.idle_timer = 0;
 		}
 		
 	}, false);
@@ -138,10 +145,13 @@ GameScene.prototype.init = function(players_count) {
 
 GameScene.prototype.update = function(dt) {
 
+	
+	this.idle_timer += dt;
+
 	if (this.players.length == 1) {
 		this.gameFinished(this.activePlayer);
 		this.game_ended = true;
-		
+
 		for (var i = 0; i < this.labels.length; i++) {
 			var label = this.labels[i];
 			if(label.update(dt) == LABEL_ACTION.REMOVE_LABEL) {
@@ -162,6 +172,7 @@ GameScene.prototype.update = function(dt) {
 
 	if (this.activePlayer && !this.activePlayer.did_shot && this.activePlayer.readyToShoot) {
 		this.bullets.push(this.activePlayer.shot());
+		this.idle_timer = 0;
 		this.nextPlayer();
 		
 		this.activePlayer.readyToShoot = false;
@@ -170,6 +181,18 @@ GameScene.prototype.update = function(dt) {
 
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
+		
+		if(this.idle_timer > IDLE_TIME) {
+			
+			var label_id = Math.round(Math.random() * (LABELS.PLAYER_IDLE.length - 1));
+			this.labels.push(new Label().init(
+				{x : player.pos.x - player.size.width, y: player.pos.y - player.size.height * 3 }, 
+				 LABELS.PLAYER_IDLE[label_id], 1, "bold 8pt retro", 
+				   null, "center", "middle", null
+				));
+			
+		}
+		
 		if(!player) break;
 		switch(player.update(dt)) {
 
@@ -187,12 +210,7 @@ GameScene.prototype.update = function(dt) {
 //						player.startDrowning();
 //						effie.createEffect(effie.effects.splash, [player.pos.x, player.pos.y]).startEffect();
 					}
-					// TODO
-					// SZymek dodaj sobie tu chlup i bulbul - 
-					// sprawdz na jakiej wysokosci zaczyna sie woda +/- 
-					// i porownaj player.y jak odpowiednia wysokosc bedzie mial 
-					// zrob efekty - najlepiej obsluz wszystko z poziomu tower nie gamescene
-					console.log('will sink!');
+					
 				} else if (player.pos.y >= target_pos) {
 					player.stoppedFalling(target_pos);
 				} 
@@ -201,8 +219,14 @@ GameScene.prototype.update = function(dt) {
 				console.log(player, 'is dead! sorry :(');
 				this.playSound('drown.wav');
 				this.players.splice(i--, 1);
-
-				if(player == this.activePlayer) { // TOFIX
+				
+				this.labels.push(new Label().init(
+					{x : player.pos.x - player.size.width, y: player.pos.y - player.size.height * 3 }, 
+					 "Bubble.. Bubble... Bubble..", 2.5, "bold 8pt retro", 
+					   null, "center", "middle", null
+					));
+					
+				if(player == this.activePlayer) {
 					this.nextPlayer();
 				}			
 				break;
@@ -277,6 +301,11 @@ GameScene.prototype.update = function(dt) {
 			this.labels.splice(i--, 1);	
 		}
 	}
+	
+	
+	if (this.idle_timer > IDLE_TIME) {
+		this.idle_timer = 0;
+	}
 }
 
 GameScene.prototype.render = function() {
@@ -329,16 +358,9 @@ GameScene.prototype.nextPlayer = function(active_died) {
 	} else {
 		next = this.players[0];
 	}
-
-	// todo handle no more players
-	if (!next) {
-		this.gameFinished({ index: 666});
-	}
-	if(this.players.length == 1) {
-		this.gameFinished(this.activePlayer);
-	}
+	
 	this.activePlayer = next;
-
+	
 	this.labels.push(new Label().init(
 		{x : next.pos.x - next.size.width, y: next.pos.y - next.size.height * 3 }, 
 		 "Player " + (next.index + 1) + " go!", 1, "bold 8pt retro", 
@@ -359,7 +381,8 @@ GameScene.prototype.setActivePlayer = function(player) {
 }
 
 GameScene.prototype.gameFinished = function(player) {
-	if(this.game_ended) return false;
+	if(this.game_ended) return;
+	
 	this.playSound('final.wav');
 	
 	var label_id = Math.round(Math.random() * (LABELS.PLAYER_WON.length - 1));

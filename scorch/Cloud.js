@@ -54,7 +54,7 @@ Cloud.prototype.render = function() {
 		var comp = this.components[i];
 		ctx.globalAlpha = comp.alpha;
 		ctx.beginPath();
-		ctx.arc(this.pos.x + comp.pos.x, this.pos.y + comp.pos.y, comp.r, 0, Math.PI * 2);
+		ctx.arc(this.pos.x + comp.pos.x, this.pos.y + comp.pos.y, comp.r, 0, Math.PI * 2, false);
 		ctx.fill();
 	}
 	ctx.restore();
