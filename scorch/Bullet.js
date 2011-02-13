@@ -32,8 +32,7 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 		width: 2,
 		height: 2
 	}
-	return this;
-	
+	return this;	
 }
 
 Bullet.prototype.boundsCheck = function(pos, angle, v, r) {

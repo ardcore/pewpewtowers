@@ -44,7 +44,6 @@ Arrow.prototype.render = function() {
 		y: this.pos.y - this.size.height / 2 + 3
 	};
 
-
 	var ctx = EViewController.shared().context;
 	ctx.fillStyle = "#ff1213";
 	ctx.save();
