@@ -155,7 +155,7 @@ Tower.prototype.render = function() {
 			y: this.pos.y - this.size.height / 2 + 3 
 		};
 	ctx.fillStyle = this.color;
-	ctx.fillRect(this.pos.x - this.size.width/2, 
+	ctx.fillRect(this.pos.x - this.size.width / 2, 
 				  this.pos.y - this.size.height + 3, 
 				   this.size.width, this.size.height )
 
@@ -172,10 +172,10 @@ Tower.prototype.render = function() {
 		this.powerbar.height = this.chargedFor/50;
 
 		ctx.fillStyle = this.powerbar.color;
-		ctx.fillRect(this.pos.x + this.size.width*1.2, this.pos.y - this.powerbar.height,
+		ctx.fillRect(this.pos.x + this.size.width * 1.2, this.pos.y - this.powerbar.height,
 					 this.powerbar.width, this.powerbar.height);
 		ctx.beginPath();
-		ctx.arc(center.x, center.y, 20, 0, Math.PI*2);
+		ctx.arc(center.x, center.y, 20, 0, Math.PI * 2, false);
 		ctx.stroke();
 	}
 }

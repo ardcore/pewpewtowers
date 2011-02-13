@@ -123,7 +123,7 @@ effie = (function() {
 
 			if (shape == 'circle') {
 				context.beginPath();
-				context.arc(x, y, radius, 0, Math.PI*2);
+				context.arc(x, y, radius, 0, Math.PI * 2, false);
 				context.closePath();
 				context.fill();
 			} else {
