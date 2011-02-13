@@ -54,7 +54,7 @@ Arrow.prototype.render = function() {
 	ctx.fillStyle = "orange";
 	ctx.textBaseline = "top";
 	ctx.textAlign = "left";
-    ctx.font = "bold 7pt Arial";
+    ctx.font = "bold 7pt retro";
     ctx.fillStyle = "#333";
 	ctx.fillRect(0, 0, this.size.width, this.size.height);
 	ctx.fillText(this.indicator, 10, 10, 150);
