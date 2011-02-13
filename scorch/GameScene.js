@@ -10,7 +10,30 @@ function GameScene() {
 	this.bullets = [];
 	this.clouds = [];
 	this.arrows = [];
+
+	this.resources = ['cityscape.mp3','final.wav','shot.wav','explosion.wav',
+	'drown.wav','damage.wav'];
+
+
 }
+
+GameScene.prototype.playSound = function(name, loop) {
+	ETexturesManager.shared().sounds[name].audio.loop = loop;
+	ETexturesManager.shared().sounds[name].audio.play();
+}
+
+GameScene.prototype.setSndVolume = function(val, name) {
+
+	if (name) {
+		ETexturesManager.shared().sounds[name].audio.volume = val;
+	} else {
+		// change overall volume, to-check if it's possible without
+		// iterating over all Audio.
+		// we should keep original volumes as hashmap and keep these
+		// proportions.
+	}
+}
+
 
 GameScene.prototype.init = function(players_count) {
 
@@ -19,6 +42,9 @@ GameScene.prototype.init = function(players_count) {
 	// start effie
 	var effieTarget = document.getElementById("Einie");
 	effie.applyTo(effieTarget).startTimer();
+
+	this.playSound('cityscape.mp3', true);
+	this.setSndVolume(.3, 'cityscape.mp3');
 
 	
 	if(!players_count) players_count = EGameController.shared().players_count || 2;
@@ -76,7 +102,8 @@ GameScene.prototype.init = function(players_count) {
 			self.activePlayer.isCharging = false;
 			// shot bullet
 			self.bullets.push(self.activePlayer.shot());
-			self.nextPlayer();			
+			self.nextPlayer();
+			self.playSound('shot.wav', false);
 		}
 		
 	}, false);
@@ -137,7 +164,8 @@ GameScene.prototype.update = function(dt) {
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
 				console.log(player, 'is dead! sorry :(');
-				if(player == this.activePlayer) {
+				this.playSound('drown.wav');
+				if(player == this.activePlayer) { // TOFIX
 					this.nextPlayer();
 				}			
 				this.players.splice(i--, 1);
@@ -151,6 +179,7 @@ GameScene.prototype.update = function(dt) {
 		if(this.map.collidesWith(bullet)) {
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
 			this.bullets.splice(i--, 1);
+			this.playSound('explosion.wav');
 		} else if(bullet.boundsCheck()) {
 			this.bullets.splice(i--, 1);
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
@@ -178,6 +207,7 @@ GameScene.prototype.update = function(dt) {
 					
 				if (damage = explosion.hitTower(player)) {
 					player.gotHit(damage);
+					this.playSound('damage.wav');
 					// handle after hit action - create smoke etc
 				}
 			}
@@ -269,6 +299,7 @@ GameScene.prototype.setActivePlayer = function(player) {
 
 GameScene.prototype.gameFinished = function(player) {
 	if(this.game_ended) return false;
+	this.playSound('final.wav');
 	var el;
 	if(el = document.getElementById('pewpewtowers-game-won')) {
 		el.firstElementChild.innerHTML = "Player " + (this.activePlayer.index + 1) + "<br>be proud!<br>A winner is you!";

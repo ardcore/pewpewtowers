@@ -51,6 +51,8 @@ server = http.createServer(function(req, res) {
 		})
 	}
 
+	// TODO add mp3/wav
+
 	else {
 		send404(res);
 	}

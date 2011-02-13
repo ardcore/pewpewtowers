@@ -21,8 +21,8 @@ function Tower() {
 
 	this.pos = {};
 	this.size = {
-		width:10,
-		height:10
+		width:15,
+		height:15
 	};
 	this.color = "orange";
 
@@ -45,7 +45,7 @@ function Tower() {
 		r: 75
 	}
 
-	this.hp = 20;
+	this.hp = 30;
 
 }
 

@@ -24,7 +24,6 @@ ETexture.prototype.init = function(image_name) {
 ETexture.prototype.load = function() {
 	
 	var self = this;
-	
 	this.image = new Image();
 	this.image.onload = function() {
 		self.size.width = self.image.width;
