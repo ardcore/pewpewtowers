@@ -3,6 +3,7 @@ MenuScene.prototype.constructor = MenuScene;
 
 function MenuScene() {
 	this.map;
+	this.clouds = [];
 }
 
 MenuScene.prototype.init = function(players_count) {
@@ -30,6 +31,18 @@ MenuScene.prototype.init = function(players_count) {
 }
 
 MenuScene.prototype.update = function(dt) {
+	
+	if (Math.random() * 100 > 99.5 && this.clouds.length < 4) {
+		var cloud = new Cloud().init();
+		this.clouds.push(cloud);
+	}
+	
+	for (var i = 0; i < this.clouds.length; i++) {
+		this.clouds[i].update(dt);
+		if(this.clouds[i].boundsCheck()) {
+			this.clouds.splice(i--, 1);
+		}
+	}
 }
 
 MenuScene.prototype.render = function() {
@@ -39,6 +52,10 @@ MenuScene.prototype.render = function() {
 	
 	// render the map
 	this.map.render();
+	
+	for (var i = 0; i < this.clouds.length; i++) {
+		this.clouds[i].render();
+	}
 	
 	ctx.save();
 	ctx.globalAlpha = 0.6
