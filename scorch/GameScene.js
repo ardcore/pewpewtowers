@@ -1,3 +1,9 @@
+var LABELS = {
+	TOWER_HIT: ["Ouch!", "That hurt!", "Don't do that!", "Why me?", "Noooo...", "Not again..."],
+	PLAYER_WON: ["Balls of steel!", "Easy as a pie.", "I accept that.", "I'm unimpressed."]
+}
+
+
 GameScene.prototype = new EScene().init();
 GameScene.prototype.constructor = GameScene;
 
@@ -10,6 +16,7 @@ function GameScene() {
 	this.bullets = [];
 	this.clouds = [];
 	this.arrows = [];
+	this.labels = [];
 
 	this.resources = ['cityscape.mp3','final.wav','shot.wav','explosion.wav',
 	'drown.wav','damage.wav'];
@@ -66,6 +73,12 @@ GameScene.prototype.init = function(players_count) {
 		var player = new Tower().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 , y: 0 }, i);
 		player.pos.y = this.map.findYPosition(player);
 		this.players.push(player);
+		// add label
+		this.labels.push(new Label().init(
+			{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
+			 "Player " + (i + 1), 1, "bold 8pt retro", 
+			   null, "center", "middle", null
+			));
 	}
 
 	// randomize starting player
@@ -211,6 +224,14 @@ GameScene.prototype.update = function(dt) {
 					
 				if (damage = explosion.hitTower(player)) {
 					player.gotHit(damage);
+					
+					var label_id = ~~(Math.random() * LABELS.TOWER_HIT.length + 0.5);
+					
+					this.labels.push(new Label().init(
+						{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
+						 LABELS.TOWER_HIT[label_id], 1, "bold 8pt retro", 
+						   null, "center", "middle", null
+						));
 					this.playSound('damage.wav');
 					// handle after hit action - create smoke etc
 				}
@@ -228,6 +249,13 @@ GameScene.prototype.update = function(dt) {
 			arrow.update(dt);
 		}
 
+	}
+	
+	for (var i = 0; i < this.labels.length; i++) {
+		var label = this.labels[i];
+		if(label.update(dt) == LABEL_ACTION.REMOVE_LABEL) {
+			this.labels.splice(i--, 1);	
+		}
 	}
 }
 
@@ -254,6 +282,10 @@ GameScene.prototype.render = function() {
 
 	for (var i = 0, n = this.arrows.length; i < n; i++) {
 		this.arrows[i].render();
+	}
+	
+	for (var i = 0; i < this.labels.length; i++) {
+		this.labels[i].render();
 	}
 	
 }
@@ -287,6 +319,11 @@ GameScene.prototype.nextPlayer = function(active_died) {
 	}
 	this.activePlayer = next;
 
+	this.labels.push(new Label().init(
+		{x : next.pos.x, y: next.pos.y - next.size.height * 3 }, 
+		 "Player " + (next.index + 1) + " go!", 1, "bold 8pt retro", 
+		   null, "center", "middle", null
+		));
 
 	next.beginTurn();
 }
@@ -304,6 +341,15 @@ GameScene.prototype.setActivePlayer = function(player) {
 GameScene.prototype.gameFinished = function(player) {
 	if(this.game_ended) return false;
 	this.playSound('final.wav');
+	
+	var label_id = ~~(Math.random() * LABELS.PLAYER_WON.length + 0.5);
+	
+	this.labels.push(new Label().init(
+		{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
+		 LABELS.PLAYER_WON[label_id], 1, "bold 8pt retro", 
+		   null, "center", "middle", null
+		));
+		
 	var el;
 	if(el = document.getElementById('pewpewtowers-game-won')) {
 		el.firstElementChild.innerHTML = "Player " + (this.activePlayer.index + 1) + "<br>be proud!<br>A winner is you!";
