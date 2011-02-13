@@ -49,7 +49,6 @@ Arrow.prototype.render = function() {
 	ctx.fillStyle = "#ff1213";
 	ctx.save();
 	ctx.translate(center.x, center.y);
-	ctx.rotate(this.angle);
 	ctx.beginPath();
 	ctx.fillStyle = "orange";
 	ctx.textBaseline = "top";

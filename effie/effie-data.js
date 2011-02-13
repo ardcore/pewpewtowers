@@ -14,6 +14,34 @@ effie.effects = {
 		emitterCoords: [200,200],
 		clearMode: "full" // not supported
 	},
+	boom: {
+		duration: 100, // duration of effect
+		count: 20, // particle count
+		degradation: .95, // related to velocity
+		velX: '-50..50', // random in range
+		velY: '-30..30',
+		sizeX: 3, // px
+		sizeY: 3,
+		longevity: '50..100',
+		falldown: '0.995..0.999',
+		color: "#94d281",
+		emitterCoords: [200,200],
+		clearMode: "full" // not supported
+	},
+	wzium: {
+		duration: 1000, // duration of effect
+		count: 100, // particle count
+		degradation: .95, // related to velocity
+		velX: '-15..15', // random in range
+		velY: '-15..15',
+		sizeX: 2, // px
+		sizeY: 2,
+		longevity: '10..20',
+		falldown: '0.995..0.999',
+		color: "orange",
+		emitterCoords: [200,200],
+		clearMode: "full" // not supported
+	},
 
 	scorchfire: {
 		name: 'scorchfire',
