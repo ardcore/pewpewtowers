@@ -245,7 +245,7 @@ GameScene.prototype.update = function(dt) {
 				if (damage = explosion.hitTower(player)) {
 					player.gotHit(damage);
 					
-					var label_id = Math.round(Math.random() * LABELS.TOWER_HIT.length) - 1;
+					var label_id = Math.round(Math.random() * (LABELS.TOWER_HIT.length - 1));
 					
 					this.labels.push(new Label().init(
 						{x : player.pos.x - player.size.width, y: player.pos.y - player.size.height * 3 }, 
@@ -362,7 +362,7 @@ GameScene.prototype.gameFinished = function(player) {
 	if(this.game_ended) return false;
 	this.playSound('final.wav');
 	
-	var label_id = Math.round(Math.random() * LABELS.PLAYER_WON.length - 1);
+	var label_id = Math.round(Math.random() * (LABELS.PLAYER_WON.length - 1));
 	
 	this.labels.push(new Label().init(
 		{x : player.pos.x, y: player.pos.y - player.size.height * 3 }, 
