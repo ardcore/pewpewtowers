@@ -49,6 +49,20 @@ server = http.createServer(function(req, res) {
 			res.write(data, 'utf8');
 			res.end();
 		})
+	} else if (path.match(/\.mp3/)) {
+		fs.readFile(__dirname + path, function(err, data) {
+			if (err) return send404(res);
+			res.writeHead(200, {'Content-Type': 'audio/mpeg'})
+			res.write(data, 'utf8');
+			res.end();
+		})
+	} else if (path.match(/\.wav/)) {
+		fs.readFile(__dirname + path, function(err, data) {
+			if (err) return send404(res);
+			res.writeHead(200, {'Content-Type': 'audio/vnd.wave'})
+			res.write(data, 'utf8');
+			res.end();
+		})
 	}
 
 	// TODO add mp3/wav
