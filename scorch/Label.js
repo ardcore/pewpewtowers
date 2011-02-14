@@ -25,6 +25,7 @@ Label.prototype.init = function(pos, text, time, font, color, align, baseline, d
 	this.baseline = baseline || "middle";
 	this.angle = deg || 0;
 	this.move_up = move_up || true;
+	this.dir = (Math.random() > 0.5) ? 1 : -1;
 	
 	this.life_time = 0;
 	
@@ -44,6 +45,7 @@ Label.prototype.update = function(dt) {
 	
 	if (this.move_up) {
 		this.pos.y -= dt * 20;
+		this.pos.x += this.dir * Math.pow(dt * 25, 2);
 	}
 	
 }

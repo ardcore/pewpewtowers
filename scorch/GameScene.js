@@ -216,7 +216,6 @@ GameScene.prototype.update = function(dt) {
 				} 
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
-				console.log(player, 'is dead! sorry :(');
 				this.playSound('drown.wav');
 				this.players.splice(i--, 1);
 				
@@ -246,9 +245,7 @@ GameScene.prototype.update = function(dt) {
 			this.bullets.splice(i--, 1);
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
 			bullet.isFollowed = true;
-			var arr = new Arrow();
-			arr.init(bullet);
-			this.arrows.push(arr);
+			this.arrows.push(new Arrow().init(bullet));
 		}
 	}
 	
