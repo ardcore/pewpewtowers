@@ -182,7 +182,7 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		
-		if(this.idle_timer > IDLE_TIME) {
+		if(this.idle_timer > IDLE_TIME && this.bullets.length == 0) {
 			
 			var label_id = Math.round(Math.random() * (LABELS.PLAYER_IDLE.length - 1));
 			this.labels.push(new Label().init(
