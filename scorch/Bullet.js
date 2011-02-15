@@ -28,6 +28,7 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	this.power = 1;
 	this.degradation = .99999;
 	this.isFollowed = false;
+	this.life_time = 0;
 	this.size = {
 		width: 2,
 		height: 2
@@ -44,6 +45,8 @@ Bullet.prototype.isAboveScreen = function() {
 	return this.pos.y < 0;
 }
 Bullet.prototype.update = function(dt) {
+
+	this.life_time += dt;
 
 	this.power = this.power * this.degradation;
 	var screen = EViewController.shared().size;

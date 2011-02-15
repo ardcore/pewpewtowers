@@ -233,13 +233,38 @@ GameScene.prototype.update = function(dt) {
 		if(this.map.collidesWith(bullet)) {
 			this.bullets.splice(i--, 1);
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
-			var miniex = effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]).startEffect();
+			effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]).startEffect();
 			this.playSound('explosion.wav');
+			continue;
 		} else if(bullet.boundsCheck()) {
 			this.bullets.splice(i--, 1);
+			continue;
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
 			bullet.isFollowed = true;
 			this.arrows.push(new Arrow().init(bullet));
+			continue;
+		}
+		
+		console.log(bullet.life_time)
+		
+		if(bullet.life_time > 0.35) {
+			for (var j = 0, n = this.players.length; j < n; j++) {
+				var player = this.players[j],
+					shield = {
+						pos: {
+							x: player.pos.x,
+							y: player.pos.y - player.size.height / 2 + 3
+						},
+						radius: player.size.shield_radius
+					}
+				
+				if(ECollisions.circlePointCollision(shield, bullet.pos)) {
+					this.bullets.splice(i--, 1);
+					this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
+					this.playSound('explosion.wav');
+					break;
+				}
+			}
 		}
 	}
 	

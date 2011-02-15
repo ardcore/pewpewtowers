@@ -21,7 +21,9 @@ function Tower() {
 	this.pos = {};
 	this.size = {
 		width:15,
-		height:15
+		height:15,
+		shield_radius: 22,
+		controls_radius: 40
 	};
 	this.color = "orange";
 
@@ -54,7 +56,7 @@ Tower.prototype.init = function(pos, index) {
 	this.index = index;
 	this.v = { x: 0, y: 0 };
 	
-	this.color = "rgb(" + (~~(Math.random() * 127) + 128) + ", " + (~~(Math.random() * 150) + 85) + ", " + (~~(Math.random() * 127) + 128) + ")";
+	this.color = "rgb(" + (~~(Math.random() * 130) + 85) + ", " + (~~(Math.random() * 130) + 85) + ", " + (~~(Math.random() * 130) + 85) + ")";
 	
 	return this;
 }
@@ -150,11 +152,6 @@ Tower.prototype.update = function(dt) {
 
 }
 
-Tower.prototype.renderShield = function() {
-	var ctx = EViewController.shared().context;
-	
-}
-
 Tower.prototype.render = function() {
 	var ctx = EViewController.shared().context,
 		center = { 
@@ -185,7 +182,7 @@ Tower.prototype.render = function() {
 	ctx.strokeStyle = "rgba(225, " + (210 * this.hp / this.max_hp) + ", 85, 0.7)";
 	ctx.lineWidth = 4 * this.hp / this.max_hp;
 	ctx.beginPath();
-	ctx.arc(center.x, center.y, 22, 0, Math.PI * 2, false);
+	ctx.arc(center.x, center.y, this.size.shield_radius, 0, Math.PI * 2, false);
 	ctx.stroke();
 	ctx.restore();
 	
@@ -193,33 +190,33 @@ Tower.prototype.render = function() {
 		
 		// draw power bar base ring
 		ctx.strokeStyle = "rgba(144, 144, 144, 0.4)";
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 5;
 		ctx.beginPath();
-		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2, false);
+		ctx.arc(center.x, center.y, this.size.controls_radius, 0, Math.PI * 2, false);
 		ctx.stroke();
 		
 		if (this.last_charge) {
 			// draw last power amount
-			ctx.strokeStyle = "rgba(120, 120, 120, 0.7)";
-			ctx.lineWidth = 3;
+			ctx.strokeStyle = "rgba(120, 120, 120, 0.6)";
+			ctx.lineWidth = 8;
 			ctx.beginPath();
-			ctx.arc(center.x, center.y, 25, 0, Math.PI * 2 * this.last_charge / this.powerbar.maxCharge, false);
+			ctx.arc(center.x, center.y, this.size.controls_radius, - Math.PI / 2, Math.PI * 2 * this.last_charge / this.powerbar.maxCharge - Math.PI / 2, false);
 			ctx.stroke();
 			
 			// mark last shoting angle
-			ctx.strokeStyle = "rgba(40, 40, 40, 0.9)";
-			ctx.lineWidth = 6;
+			ctx.strokeStyle = "rgba(40, 40, 40, 0.8)";
+			ctx.lineWidth = 10;
 			ctx.beginPath();
-			ctx.arc(center.x, center.y, 25, this.last_angle - 0.1 - Math.PI, this.last_angle + 0.1 - Math.PI, false);
+			ctx.arc(center.x, center.y, this.size.controls_radius, this.last_angle - 0.1 - Math.PI, this.last_angle + 0.1 - Math.PI, false);
 			ctx.stroke();
 			
 		}
 		
 		// draw current charge level
-		ctx.strokeStyle = "rgba(225, 190, 80, 1.0)";
-		ctx.lineWidth = 4;
+		ctx.strokeStyle = "rgba(210, 105, 70, 0.8)";
+		ctx.lineWidth = 8;
 		ctx.beginPath();
-		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2 * this.chargedFor / this.powerbar.maxCharge, false);
+		ctx.arc(center.x, center.y, this.size.controls_radius, - Math.PI / 2, Math.PI * 2 * this.chargedFor / this.powerbar.maxCharge - Math.PI / 2, false);
 		ctx.stroke();
 		
 		
