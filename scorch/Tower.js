@@ -45,6 +45,7 @@ function Tower() {
 	}
 
 	this.hp = 30;
+	this.max_hp = this.hp;
 
 }
 
@@ -77,6 +78,8 @@ Tower.prototype.shot = function() {
 	var pos = {};
 	pos.x = this.pos.x + -Math.cos(this.rifle.angle) * this.rifle.width;
 	pos.y = this.pos.y - this.size.height / 2 + 3 + -Math.sin(this.rifle.angle) * this.rifle.width;
+	this.last_charge = this.chargedFor;
+	this.last_angle = this.rifle.angle;
 	this.chargedFor = 0;
 	this.powerbar.height = 0;
 	this.did_shot = true;
@@ -150,11 +153,14 @@ Tower.prototype.render = function() {
 			x: this.pos.x,
 			y: this.pos.y - this.size.height / 2 + 3 
 		};
+		
+	// draw base of the tower
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.pos.x - this.size.width / 2, 
 				  this.pos.y - this.size.height + 3, 
 				   this.size.width, this.size.height )
 
+	// draw rifle
 	ctx.save();
 	ctx.translate(center.x, center.y);
 	ctx.rotate(this.rifle.angle);
@@ -163,28 +169,47 @@ Tower.prototype.render = function() {
 				  0 + this.rifle.height / 2,
 				  -this.rifle.width, -this.rifle.height);
 	ctx.restore();
+	
+	// draw shield	
+	ctx.strokeStyle = "rgba(225, " + (210 * this.hp / this.max_hp) + ", 85, 0.7)";
+	ctx.lineWidth = 4 * this.hp / this.max_hp;
+	ctx.beginPath();
+	ctx.arc(center.x, center.y, 22, 0, Math.PI * 2, false);
+	ctx.stroke();
+	
 	if (this.isActive) {
-
-		this.powerbar.height = this.chargedFor/50;
-
-		ctx.fillStyle = this.powerbar.color;
-		ctx.fillRect(this.pos.x + this.size.width * 1.2, this.pos.y - this.powerbar.height,
-					 this.powerbar.width, this.powerbar.height);
-		ctx.beginPath();
+		
+		// draw power bar base ring
 		ctx.strokeStyle = "rgba(144, 144, 144, 0.4)";
-		ctx.lineWidth = 3;
+		ctx.lineWidth = 2;
+		ctx.beginPath();
 		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2, false);
 		ctx.stroke();
+		
+		if (this.last_charge) {
+			// draw last power amount
+			ctx.strokeStyle = "rgba(120, 120, 120, 0.7)";
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			ctx.arc(center.x, center.y, 25, 0, Math.PI * 2 * this.last_charge / this.powerbar.maxCharge, false);
+			ctx.stroke();
+			
+			// mark last shoting angle
+			ctx.strokeStyle = "rgba(40, 40, 40, 0.9)";
+			ctx.lineWidth = 6;
+			ctx.beginPath();
+			ctx.arc(center.x, center.y, 25, this.last_angle - 0.1 - Math.PI, this.last_angle + 0.1 - Math.PI, false);
+			ctx.stroke();
+			
+		}
+		
+		// draw current charge level
+		ctx.strokeStyle = "rgba(180, 40, 180, 1.0)";
+		ctx.lineWidth = 4;
+		ctx.beginPath();
+		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2 * this.chargedFor / this.powerbar.maxCharge, false);
+		ctx.stroke();
+		
+		
 	}
-	
-	var cur_hp = this.hp / 10,
-		hp = "";
-	do {
-		hp += '\u2665'
-	} while(--cur_hp > 0);
-	
-	ctx.font = "bold 8pt retro";
-	ctx.align = "center";
-	ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-	ctx.fillText(hp, center.x, this.pos.y + 15);
 }

@@ -16,7 +16,7 @@ function Label() {
 Label.prototype.init = function(pos, text, time, font, color, align, baseline, deg, move_up) {
 	this.pos = pos;
 	this.text = text;
-	this.duration = ((time && time.duration) ? time.duration : time) || 2;
+	this.duration = ((time && time.duration) ? time.duration : time);
 	this.fade_start = (time && time.fade_start) ? time.fade_start : this.duration * 0.8;
 	this.font = font || "bold 10pt Arial";
 	this.color = ((color && color.color) ? color.color : color) || "black";
@@ -33,7 +33,13 @@ Label.prototype.init = function(pos, text, time, font, color, align, baseline, d
 }
 
 Label.prototype.update = function(dt) {
+	
+	if (!this.duration) {
+		return;
+	}
+	
 	this.life_time += dt;
+	
 	
 	if (this.life_time > this.fade_start) {
 		this.alpha = 1 - (this.life_time - this.fade_start) / (this.duration - this.fade_start);
