@@ -15,6 +15,7 @@ function Bullet() {
 	this.isFollowed;
 	this.life_time;
 	this.size;
+	this.trail;
 }
 
 Bullet.prototype.init = function(pos, angle, v, r) {
@@ -33,8 +34,18 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 		width: 2,
 		height: 2
 	}
+	
+	effie.createEffect(effie.effects.wzium, null, this).startEffect();
+	
+	this.trail = effie.createEffect(effie.effects.trail, null, this);
+	this.trail.startEffect();
+	
 	return this;
 	
+}
+
+Bullet.prototype.cleanUp = function(){
+	this.trail.forceQuit = true; // easiest way to properly wipe effie effect
 }
 
 Bullet.prototype.boundsCheck = function(pos, angle, v, r) {

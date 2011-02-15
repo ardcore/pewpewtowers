@@ -123,7 +123,6 @@ GameScene.prototype.init = function(players_count) {
 			// shot bullet
 			var bullet = self.activePlayer.shot();
 			self.bullets.push(bullet);
-			effie.createEffect(effie.effects.wzium, null, bullet).startEffect();
 			self.nextPlayer();
 			self.playSound('shot.wav', false);
 		}
@@ -231,12 +230,14 @@ GameScene.prototype.update = function(dt) {
 		bullet = this.bullets[i];
 		bullet.update(dt);
 		if(this.map.collidesWith(bullet)) {
+			bullet.cleanUp();
 			this.bullets.splice(i--, 1);
 			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
 			effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]).startEffect();
 			this.playSound('explosion.wav');
 			continue;
 		} else if(bullet.boundsCheck()) {
+			bullet.cleanUp();
 			this.bullets.splice(i--, 1);
 			continue;
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
@@ -244,8 +245,6 @@ GameScene.prototype.update = function(dt) {
 			this.arrows.push(new Arrow().init(bullet));
 			continue;
 		}
-		
-		console.log(bullet.life_time)
 		
 		if(bullet.life_time > 0.35) {
 			for (var j = 0, n = this.players.length; j < n; j++) {
@@ -259,6 +258,7 @@ GameScene.prototype.update = function(dt) {
 					}
 				
 				if(ECollisions.circlePointCollision(shield, bullet.pos)) {
+					bullet.cleanUp();
 					this.bullets.splice(i--, 1);
 					this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
 					this.playSound('explosion.wav');

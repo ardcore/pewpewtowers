@@ -88,9 +88,22 @@ effie.effects = {
 		blending: "lighter"
 	},
 	
-	scorchexplosion: {
+	trail: {
 		name: 'scorchexplosion',
-		shape: 'circle'
+		shape: 'circle',
+		radius: '5..15',
+		opacity: '0.4..0.8',
+		longevity: '20..40',
+		falldown: '0.900..0.950',
+		color: "#d6dcde",
+		count: 2,
+		reverseVelocityRef: true,
+		callbackAfterDeath: function(obRef) {
+			obRef.addParticle();
+		},
+		emitterCoords: function(obj) {
+			return [obj.pos.x, obj.pos.y];
+		}
 	},
 	
 	smallfire: {
