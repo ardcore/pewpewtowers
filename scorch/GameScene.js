@@ -182,7 +182,7 @@ GameScene.prototype.update = function(dt) {
 	for (var i = 0; i < this.players.length; i++) {
 		var player = this.players[i];
 		
-		if(this.idle_timer > IDLE_TIME) {
+		if(this.idle_timer > IDLE_TIME && this.bullets.length == 0) {
 			
 			var label_id = Math.round(Math.random() * (LABELS.PLAYER_IDLE.length - 1));
 			this.labels.push(new Label().init(
@@ -216,7 +216,6 @@ GameScene.prototype.update = function(dt) {
 				} 
 				break;
 			case PLAYER_ACTION.OUT_OF_BOUNDS:
-				console.log(player, 'is dead! sorry :(');
 				this.playSound('drown.wav');
 				this.players.splice(i--, 1);
 				
@@ -246,9 +245,7 @@ GameScene.prototype.update = function(dt) {
 			this.bullets.splice(i--, 1);
 		} else if(!bullet.isFollowed && bullet.isAboveScreen()) {
 			bullet.isFollowed = true;
-			var arr = new Arrow();
-			arr.init(bullet);
-			this.arrows.push(arr);
+			this.arrows.push(new Arrow().init(bullet));
 		}
 	}
 	
