@@ -1,3 +1,7 @@
+var EXPLOSION_ACTION = {
+	EXPLOSION_ANIMATION_ENDED: 1
+}
+
 function Explosion() {
 	this.pos;
 	this.radius;
@@ -28,8 +32,9 @@ Explosion.prototype.hitTower = function(obj) {
 
 Explosion.prototype.update = function(dt) {
 	this.life += dt;
-	
-	return this.life > this.anim_length  
+	if(this.life > this.anim_length) {
+		return EXPLOSION_ACTION.EXPLOSION_ANIMATION_ENDED;
+	}   
 }
 
 Explosion.prototype.render = function() {

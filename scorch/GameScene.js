@@ -1,9 +1,13 @@
 var LABELS = {
-	TOWER_HIT: ["Ouch!", "That hurt!", "Don't do that!", "Why me?", "Noooo...", "Not again..."],
-	PLAYER_WON: ["Balls of steel!", "Easy as pie.", "I accept that.", "I'm unimpressed."],
-	PLAYER_IDLE: ["Boring...", "Knock, knock?", "Sleeping?", "I'm waiting...", "What was it?", "*taps his foot*", "*whistles*", "*yawns*"]
+		TOWER_HIT: ["Ouch!", "That hurt!", "Don't do that!", "Why me?", "Noooo...", "Not again..."],
+		PLAYER_WON: ["Balls of steel!", "Easy as pie.", "I accept that.", "I'm unimpressed."],
+		PLAYER_IDLE: ["Boring...", "Knock, knock?", "Sleeping?", "I'm waiting...", "What was it?", "*taps his foot*", "*whistles*", "*yawns*"]
+	},
+	FLAG = {
+		ACTIVE_DIED: true
 	},
 	IDLE_TIME = 10;
+
 
 
 GameScene.prototype = new EScene().init();
@@ -26,8 +30,7 @@ function GameScene() {
 	'drown.wav','damage.wav'];
 
 	var wl = document.getElementById("i-love-walking-along-the-sea-shore");
-	var cheight = EViewController.shared().size.height;
-	this.waterLevel	=  cheight- (wl.offsetHeight/2);
+	this.waterLevel	=  EViewController.shared().size.height - (wl.offsetHeight/2);
 
 }
 
@@ -62,16 +65,17 @@ GameScene.prototype.init = function(players_count) {
 
 	
 	if(!players_count) players_count = EGameController.shared().players_count || 2;
+	
 	var screen = EViewController.shared().size,
 		canvas = EViewController.shared().canvas;
 		
 	// create new map
 	this.map = new Map().init(screen.width, screen.height);
 	
-	// set worl gravity
+	// set world gravity
 	this.gravity = { x: 0, y: 50 };
 	
-	// calculate horizontal placing area of player's tower
+	// calculate width attributable for each tower placing area
 	player_pos_step = screen.width / players_count;
 	
 	// place players on the map in random positions
@@ -90,19 +94,15 @@ GameScene.prototype.init = function(players_count) {
 
 	// randomize starting player
 	this.setActivePlayer( this.getRandomPlayer() );
-	this.activePlayer.beginTurn();	
 
 	this.idle_timer = 0;
 
 	// SUPER HACKY MOUSE SUPPORT
 	
 	var is_moving,
-		self = this,
-		mouseDownTimeStamp;
+		self = this;
 		
 	function mousePosToCanvasCoords(e) {
-		
-		var canvas = EViewController.shared().canvas;
 		return {
 			x: e.pageX - canvas.offsetLeft,
 			y: e.pageY - canvas.offsetTop
@@ -126,7 +126,6 @@ GameScene.prototype.init = function(players_count) {
 			effie.createEffect(effie.effects.wzium, null, bullet).startEffect();
 			self.nextPlayer();
 			self.playSound('shot.wav', false);
-			self.idle_timer = 0;
 		}
 		
 	}, false);
@@ -145,13 +144,14 @@ GameScene.prototype.init = function(players_count) {
 
 GameScene.prototype.update = function(dt) {
 
-	
-	this.idle_timer += dt;
+	if(this.bullets.length == 0) {
+		this.idle_timer += dt;
+	}
 
 	if (this.players.length == 1) {
 		this.gameFinished(this.activePlayer);
-		this.game_ended = true;
 
+		// stop everything but let the labels to fade out
 		for (var i = 0; i < this.labels.length; i++) {
 			var label = this.labels[i];
 			if(label.update(dt) == LABEL_ACTION.REMOVE_LABEL) {
@@ -161,6 +161,7 @@ GameScene.prototype.update = function(dt) {
 		return;
 	}
 
+	// 0.5% chance to generate a cloud every frame with max of 3 clouds at the same time
 	if (Math.random() * 100 > 99.5 && this.clouds.length < 4) {
 		this.clouds.push(new Cloud().init());
 	}
@@ -172,7 +173,6 @@ GameScene.prototype.update = function(dt) {
 
 	if (this.activePlayer && !this.activePlayer.did_shot && this.activePlayer.readyToShoot) {
 		this.bullets.push(this.activePlayer.shot());
-		this.idle_timer = 0;
 		this.nextPlayer();
 		
 		this.activePlayer.readyToShoot = false;
@@ -199,18 +199,13 @@ GameScene.prototype.update = function(dt) {
 			case PLAYER_ACTION.IS_DEAD:
 				this.players.splice(i--, 1);
 				if(player == this.activePlayer) {
-					this.nextPlayer();
+					this.nextPlayer(FLAG.ACTIVE_DIED);
 				}			
 				break;
 			case PLAYER_ACTION.IS_FALLING:
 				var target_pos = this.map.findYPosition(player)
 				if(target_pos === false) {
-
-					if (player.pos.y > this.waterLevel) {
-//						player.startDrowning();
-//						effie.createEffect(effie.effects.splash, [player.pos.x, player.pos.y]).startEffect();
-					}
-					
+					// player will sink
 				} else if (player.pos.y >= target_pos) {
 					player.stoppedFalling(target_pos);
 				} 
@@ -226,7 +221,7 @@ GameScene.prototype.update = function(dt) {
 					));
 					
 				if(player == this.activePlayer) {
-					this.nextPlayer();
+					this.nextPlayer(FLAG.ACTIVE_DIED);
 				}			
 				break;
 		}
@@ -236,10 +231,9 @@ GameScene.prototype.update = function(dt) {
 		bullet = this.bullets[i];
 		bullet.update(dt);
 		if(this.map.collidesWith(bullet)) {
-			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
-			var miniex = effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]);
-			miniex.startEffect();
 			this.bullets.splice(i--, 1);
+			this.explosions.push(new Explosion().init(bullet.pos, bullet.r, 1.5));
+			var miniex = effie.createEffect(effie.effects.boom, [bullet.pos.x, bullet.pos.y]).startEffect();
 			this.playSound('explosion.wav');
 		} else if(bullet.boundsCheck()) {
 			this.bullets.splice(i--, 1);
@@ -258,11 +252,13 @@ GameScene.prototype.update = function(dt) {
 	
 	for (var i = 0; i < this.explosions.length; i++) {
 		var explosion = this.explosions[i];
-		if (explosion.update(dt)) {
+		if (explosion.update(dt) == EXPLOSION_ACTION.EXPLOSION_ANIMATION_ENDED) {
+			this.explosions.splice(i--, 1);
 			for (var j = 0, n = this.players.length; j < n; j++) {
 				var player = this.players[j],
 					damage;
 					
+				// if there was collision and damage reported					
 				if (damage = explosion.hitTower(player)) {
 					player.gotHit(damage);
 					
@@ -278,7 +274,6 @@ GameScene.prototype.update = function(dt) {
 				}
 			}
 			this.map.addDestruction(explosion.pos, explosion.radius);
-			this.explosions.splice(i--, 1);
 		} 
 	}
 
@@ -344,41 +339,39 @@ GameScene.prototype.getRandomPlayer = function() {
 // loops through players collection getting next one
 
 GameScene.prototype.nextPlayer = function(active_died) {
-	var next;
+	var next_player;
+
+	this.idle_timer = 0;
 
 	if(!active_died) {
 		this.activePlayer.isActive = false;
 		if(this.players.length) {
 			this.players.push(this.players.shift())
-			next = this.players[0];
+			next_player = this.players[0];
 		}
 	} else {
-		next = this.players[0];
+		next_player = this.players[0];
 	}
 	
-	this.activePlayer = next;
+	this.setActivePlayer(next_player);
 	
 	this.labels.push(new Label().init(
-		{x : next.pos.x - next.size.width, y: next.pos.y - next.size.height * 3 }, 
-		 "Player " + (next.index + 1) + " go!", 1, "bold 8pt retro", 
+		{x : next_player.pos.x - next_player.size.width, y: next_player.pos.y - next_player.size.height * 3 }, 
+		 "Player " + (next_player.index + 1) + " go!", 1, "bold 8pt retro", 
 		   null, "center", "middle", null
 		));
 
-	next.beginTurn();
-}
-
-// returns currently active player
-GameScene.prototype.getActivePlayer = function() {
-	return this.activePlayer;
 }
 
 GameScene.prototype.setActivePlayer = function(player) {
 	this.activePlayer = player;
 	player.isActive = true;
+	player.beginTurn();	
 }
 
 GameScene.prototype.gameFinished = function(player) {
 	if(this.game_ended) return;
+	this.game_ended = true;
 	
 	this.playSound('final.wav');
 	

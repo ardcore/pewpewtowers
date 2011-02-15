@@ -3,7 +3,7 @@
  */
 
 var PLAYER_ACTION = {
-	FALLING: 1,
+	IS_FALLING: 1,
 	OUT_OF_BOUNDS: 2,
 	IS_DEAD: 3
 }
@@ -16,8 +16,6 @@ function Tower() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
-	this.burnEffect = null;
-	this.is_dead = false;
 	this.is_drowning = false;
 
 	this.pos = {};
@@ -101,15 +99,13 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 
 Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
-	this.hp = this.hp - damage;
+	this.hp -= damage;
 	
 	var smoke = effie.createEffect(effie.effects.scorchsmoke, null, this);
 	smoke.startEffect();
 	
 	var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
 	burnEffect.startEffect();
-
-	// react to being hit
 }
 
 Tower.prototype.stoppedFalling = function(y_pos) {
@@ -175,7 +171,20 @@ Tower.prototype.render = function() {
 		ctx.fillRect(this.pos.x + this.size.width * 1.2, this.pos.y - this.powerbar.height,
 					 this.powerbar.width, this.powerbar.height);
 		ctx.beginPath();
-		ctx.arc(center.x, center.y, 20, 0, Math.PI * 2, false);
+		ctx.strokeStyle = "rgba(144, 144, 144, 0.4)";
+		ctx.lineWidth = 3;
+		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2, false);
 		ctx.stroke();
 	}
+	
+	var cur_hp = this.hp / 10,
+		hp = "";
+	do {
+		hp += '\u2665'
+	} while(--cur_hp > 0);
+	
+	ctx.font = "bold 8pt retro";
+	ctx.align = "center";
+	ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+	ctx.fillText(hp, center.x, this.pos.y + 15);
 }
