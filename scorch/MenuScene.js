@@ -57,12 +57,6 @@ MenuScene.prototype.render = function() {
 		this.clouds[i].render();
 	}
 	
-	ctx.save();
-	ctx.globalAlpha = 0.6
-	ctx.fillStyle = "#ffffff"
-	ctx.fillRect(0, 0, screen.width, screen.height);
-	ctx.restore();
-	
 }
 
 MenuScene.prototype.onUnload = function() {
