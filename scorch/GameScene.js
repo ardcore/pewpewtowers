@@ -309,6 +309,8 @@ GameScene.prototype.render = function() {
 		this.players[i].render();
 	}
 	
+	this.map.renderBackgroundMap();
+	
 	for (var i = 0; i < this.bullets.length; i++) {
 		this.bullets[i].render();
 	}

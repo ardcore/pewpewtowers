@@ -53,6 +53,9 @@ Tower.prototype.init = function(pos, index) {
 	this.pos = pos;
 	this.index = index;
 	this.v = { x: 0, y: 0 };
+	
+	this.color = "rgb(" + (~~(Math.random() * 127) + 128) + ", " + (~~(Math.random() * 150) + 85) + ", " + (~~(Math.random() * 127) + 128) + ")";
+	
 	return this;
 }
 
@@ -147,6 +150,11 @@ Tower.prototype.update = function(dt) {
 
 }
 
+Tower.prototype.renderShield = function() {
+	var ctx = EViewController.shared().context;
+	
+}
+
 Tower.prototype.render = function() {
 	var ctx = EViewController.shared().context,
 		center = { 
@@ -170,12 +178,16 @@ Tower.prototype.render = function() {
 				  -this.rifle.width, -this.rifle.height);
 	ctx.restore();
 	
-	// draw shield	
+	
+	// draw shield
+	ctx.save();	
+	ctx.globalCompositeOperation = "destination-over";
 	ctx.strokeStyle = "rgba(225, " + (210 * this.hp / this.max_hp) + ", 85, 0.7)";
 	ctx.lineWidth = 4 * this.hp / this.max_hp;
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, 22, 0, Math.PI * 2, false);
 	ctx.stroke();
+	ctx.restore();
 	
 	if (this.isActive) {
 		
@@ -204,7 +216,7 @@ Tower.prototype.render = function() {
 		}
 		
 		// draw current charge level
-		ctx.strokeStyle = "rgba(180, 40, 180, 1.0)";
+		ctx.strokeStyle = "rgba(225, 190, 80, 1.0)";
 		ctx.lineWidth = 4;
 		ctx.beginPath();
 		ctx.arc(center.x, center.y, 25, 0, Math.PI * 2 * this.chargedFor / this.powerbar.maxCharge, false);
