@@ -37,6 +37,7 @@ EGameController.prototype.init = function() {
 	
 	this.scenes.menu_scene = MenuScene;
 	this.scenes.game_scene = GameScene;
+	this.scenes.game_ai_scene = GameAIScene;
 	
 	this.changeSceneTo('menu_scene');
 	

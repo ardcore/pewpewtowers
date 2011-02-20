@@ -27,12 +27,16 @@
 		<script type="text/javascript" src="scorch/Explosion.js"></script>
 		<script type="text/javascript" src="scorch/Cloud.js"></script>
 		<script type="text/javascript" src="scorch/Bullet.js"></script>
+        <script type="text/javascript" src="scorch/BulletAI.js"></script>
+
 		<script type="text/javascript" src="scorch/Tower.js"></script>
+        <script type="text/javascript" src="scorch/TowerAI.js"></script>
 		<script type="text/javascript" src="scorch/Map.js"></script>
         <script type="text/javascript" src="scorch/Map.js"></script>
         <script type="text/javascript" src="scorch/Arrow.js"></script>
 		<script type="text/javascript" src="scorch/MenuScene.js"></script>
 		<script type="text/javascript" src="scorch/GameScene.js"></script>
+        <script type="text/javascript" src="scorch/GameAIScene.js"></script>
 	</head>
 	<body>
 		<!-- <h1>Pew pew towers!</small></h1> -->
@@ -43,7 +47,10 @@
 				<p>Select number of players (2-8)</p>
 				<input type="number" min="2" max="8" value="2" id="pewpewtowers-count">
 			</div>
-			<div><button id="pewpewtowers-start">Enter the fight!</button></div>
+			<div>
+                <button id="pewpewtowers-start">Hotseat!</button>
+                <button id="pewpewtowers-start-ai">VS Computer!</button>
+            </div>
 			<div class="credits">
 				Put together in 48h by<br>
 				<a href="http://twitter.com/ard">ard</a> and <a href="http://provoke.it">tom tu</a><br>
