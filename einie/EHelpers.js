@@ -59,6 +59,9 @@ ECollisions = {
 	circlePointCollision: function(circle, point) {
 		return this.pointsDistance(circle.pos, point) <= circle.radius;
 	},
+	circleCircleCollision: function(circleA, circleB) {
+		return this.pointsDistance(cricleA.pos, circleB.pos) <= circleA.radius + circleB.radius;
+	},
 	rectPointCollision: function(rect, point) {
 		return ((point.x >= rect.pos.x && point.x <= rect.pos.x + rect.size.width) 
 		        && (point.y >= rect.pos.y && point.y <= rect.pos.y + rect.size.height));

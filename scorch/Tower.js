@@ -3,7 +3,7 @@
  */
 
 var PLAYER_ACTION = {
-	FALLING: 1,
+	IS_FALLING: 1,
 	OUT_OF_BOUNDS: 2,
 	IS_DEAD: 3
 }
@@ -16,14 +16,14 @@ function Tower() {
 	this.chargedFor = 0;
 	this.readyToShoot = false;
 	this.did_shot = false;
-	this.burnEffect = null;
-	this.is_dead = false;
 	this.is_drowning = false;
 
 	this.pos = {};
 	this.size = {
 		width:15,
-		height:15
+		height:15,
+		shield_radius: 22,
+		controls_radius: 40
 	};
 	this.color = "orange";
 
@@ -47,6 +47,7 @@ function Tower() {
 	}
 
 	this.hp = 30;
+	this.max_hp = this.hp;
 
 }
 
@@ -54,6 +55,9 @@ Tower.prototype.init = function(pos, index) {
 	this.pos = pos;
 	this.index = index;
 	this.v = { x: 0, y: 0 };
+	
+	this.color = "rgb(" + (~~(Math.random() * 130) + 85) + ", " + (~~(Math.random() * 130) + 85) + ", " + (~~(Math.random() * 130) + 85) + ")";
+	
 	return this;
 }
 
@@ -79,6 +83,8 @@ Tower.prototype.shot = function() {
 	var pos = {};
 	pos.x = this.pos.x + -Math.cos(this.rifle.angle) * this.rifle.width;
 	pos.y = this.pos.y - this.size.height / 2 + 3 + -Math.sin(this.rifle.angle) * this.rifle.width;
+	this.last_charge = this.chargedFor;
+	this.last_angle = this.rifle.angle;
 	this.chargedFor = 0;
 	this.powerbar.height = 0;
 	this.did_shot = true;
@@ -101,15 +107,13 @@ Tower.prototype.updateRifleAngle = function(mouse_pos) {
 
 Tower.prototype.gotHit = function(damage) {
 	this.is_falling = true;
-	this.hp = this.hp - damage;
+	this.hp -= damage;
 	
 	var smoke = effie.createEffect(effie.effects.scorchsmoke, null, this);
 	smoke.startEffect();
 	
 	var burnEffect = effie.createEffect(effie.effects.scorchfire, null, this);
 	burnEffect.startEffect();
-
-	// react to being hit
 }
 
 Tower.prototype.stoppedFalling = function(y_pos) {
@@ -154,11 +158,14 @@ Tower.prototype.render = function() {
 			x: this.pos.x,
 			y: this.pos.y - this.size.height / 2 + 3 
 		};
+		
+	// draw base of the tower
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.pos.x - this.size.width / 2, 
 				  this.pos.y - this.size.height + 3, 
 				   this.size.width, this.size.height )
 
+	// draw rifle
 	ctx.save();
 	ctx.translate(center.x, center.y);
 	ctx.rotate(this.rifle.angle);
@@ -167,15 +174,51 @@ Tower.prototype.render = function() {
 				  0 + this.rifle.height / 2,
 				  -this.rifle.width, -this.rifle.height);
 	ctx.restore();
+	
+	
+	// draw shield
+	ctx.save();	
+	ctx.globalCompositeOperation = "destination-over";
+	ctx.strokeStyle = "rgba(225, " + (210 * this.hp / this.max_hp) + ", 85, 0.7)";
+	ctx.lineWidth = 4 * this.hp / this.max_hp;
+	ctx.beginPath();
+	ctx.arc(center.x, center.y, this.size.shield_radius, 0, Math.PI * 2, false);
+	ctx.stroke();
+	ctx.restore();
+	
 	if (this.isActive) {
-
-		this.powerbar.height = this.chargedFor/50;
-
-		ctx.fillStyle = this.powerbar.color;
-		ctx.fillRect(this.pos.x + this.size.width * 1.2, this.pos.y - this.powerbar.height,
-					 this.powerbar.width, this.powerbar.height);
+		
+		// draw power bar base ring
+		ctx.strokeStyle = "rgba(144, 144, 144, 0.4)";
+		ctx.lineWidth = 5;
 		ctx.beginPath();
-		ctx.arc(center.x, center.y, 20, 0, Math.PI * 2, false);
+		ctx.arc(center.x, center.y, this.size.controls_radius, 0, Math.PI * 2, false);
 		ctx.stroke();
+		
+		if (this.last_charge) {
+			// draw last power amount
+			ctx.strokeStyle = "rgba(120, 120, 120, 0.6)";
+			ctx.lineWidth = 8;
+			ctx.beginPath();
+			ctx.arc(center.x, center.y, this.size.controls_radius, - Math.PI / 2, Math.PI * 2 * this.last_charge / this.powerbar.maxCharge - Math.PI / 2, false);
+			ctx.stroke();
+			
+			// mark last shoting angle
+			ctx.strokeStyle = "rgba(40, 40, 40, 0.8)";
+			ctx.lineWidth = 10;
+			ctx.beginPath();
+			ctx.arc(center.x, center.y, this.size.controls_radius, this.last_angle - 0.1 - Math.PI, this.last_angle + 0.1 - Math.PI, false);
+			ctx.stroke();
+			
+		}
+		
+		// draw current charge level
+		ctx.strokeStyle = "rgba(210, 105, 70, 0.8)";
+		ctx.lineWidth = 8;
+		ctx.beginPath();
+		ctx.arc(center.x, center.y, this.size.controls_radius, - Math.PI / 2, Math.PI * 2 * this.chargedFor / this.powerbar.maxCharge - Math.PI / 2, false);
+		ctx.stroke();
+		
+		
 	}
 }

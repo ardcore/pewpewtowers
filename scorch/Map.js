@@ -99,6 +99,7 @@ Map.prototype.render = function() {
 	var ctx = EViewController.shared().context,
 		screen = EViewController.shared().size;		
 	
+	ctx.save();
 	
 	// draw collidable terrain
 	ctx.fillStyle = "#94d281";
@@ -127,6 +128,20 @@ Map.prototype.render = function() {
 		//this.map_image_data = ctx.getImageData(this.update_collision_map_area.x, this.update_collision_map_area.y, this.update_collision_map_area.w, this.update_collision_map_area.h);
 	}
 	
+	ctx.restore();
+
+	if (this.update_collision_map) {
+		this.update_collision_map = false;
+		//ctx.putImageData(this.map_image_data, this.update_collision_map_area.x, this.update_collision_map_area.y);
+	}
+}
+
+
+Map.prototype.renderBackgroundMap = function() {
+	var ctx = EViewController.shared().context,
+		screen = EViewController.shared().size;		
+
+	ctx.save();
 	// draw background terrain
 	ctx.globalCompositeOperation = 'destination-over';
 	ctx.fillStyle = "#31564d";
@@ -140,11 +155,6 @@ Map.prototype.render = function() {
 	ctx.lineTo(screen.width, screen.height);
 	ctx.lineTo(0, screen.height);
 	ctx.fill();
-	
-	ctx.globalCompositeOperation = 'source-over';
-
-	if (this.update_collision_map) {
-		this.update_collision_map = false;
-		//ctx.putImageData(this.map_image_data, this.update_collision_map_area.x, this.update_collision_map_area.y);
-	}
+	ctx.restore();
+		
 }

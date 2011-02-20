@@ -15,6 +15,7 @@ function Bullet() {
 	this.isFollowed;
 	this.life_time;
 	this.size;
+	this.trail;
 }
 
 Bullet.prototype.init = function(pos, angle, v, r) {
@@ -28,11 +29,23 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	this.power = 1;
 	this.degradation = .99999;
 	this.isFollowed = false;
+	this.life_time = 0;
 	this.size = {
 		width: 2,
 		height: 2
 	}
-	return this;	
+	
+	effie.createEffect(effie.effects.wzium, null, this).startEffect();
+	
+	this.trail = effie.createEffect(effie.effects.trail, null, this);
+	this.trail.startEffect();
+	
+	return this;
+	
+}
+
+Bullet.prototype.cleanUp = function(){
+	this.trail.forceQuit = true; // easiest way to properly wipe effie effect
 }
 
 Bullet.prototype.boundsCheck = function(pos, angle, v, r) {
@@ -43,6 +56,8 @@ Bullet.prototype.isAboveScreen = function() {
 	return this.pos.y < 0;
 }
 Bullet.prototype.update = function(dt) {
+
+	this.life_time += dt;
 
 	this.power = this.power * this.degradation;
 	var screen = EViewController.shared().size;

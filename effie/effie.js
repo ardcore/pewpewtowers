@@ -89,14 +89,18 @@ effie = (function() {
 			opacity = opacity * degradation;
 			sizeX = sizeX * sizeXTrans();
 			sizeY = sizeY * sizeYTrans();
-
-			x = x + (velX * dt) + velXTrans(total);
-			y = y + (velY * dt) + velYTrans(total);
-
-			// update speed
-			velX = velX * degradation;
-			velY = velY * degradation;
-			//debugger;
+			if(!this.reverseVelocityRef) {
+				x = x + (velX * dt) + velXTrans(total);
+				y = y + (velY * dt) + velYTrans(total);
+	
+				// update speed
+				velX = velX * degradation;
+				velY = velY * degradation;
+				//debugger;
+			} else {
+				x -= this.reverseVelocityRef.x * dt;
+				y -= this.reverseVelocityRef.y * dt;
+			}
 
 			// update size
 			sizeX = sizeX * falldown;
@@ -311,7 +315,11 @@ effie = (function() {
 							coords = emitter.concat();
 						}
 					}
-					eff.particles.push(new Particle(coords[0], coords[1], effect));
+					var particle = new Particle(coords[0], coords[1], effect);
+					if (effect.reverseVelocityRef) {
+						particle.reverseVelocityRef = objToFollow.v;
+					}
+					eff.particles.push(particle);
 				},
 
 
@@ -345,8 +353,13 @@ effie = (function() {
 					effectDuration -= (dt);
 					for (var i = 0; i < this.particles.length; i++) {
 						if (this.isActive && !this.particles[i].isDead) {
+							// HACK for bullet trail
+							if(this.particles[i].reverseVelocityFromRef) {
+								this.particles[i].custom_vel = this.particles[i].reverseVelocityFromRef;
+							}
 							this.particles[i].update(dt, elapsedTime);
 							this.particles[i].draw(ctx);
+							
 							//console.log(effectDuration);
 						} else {
 							if (this.isActive && effectDuration > 0 && this.particles[i].callbackAfterDeath) {
