@@ -9,6 +9,7 @@ var PLAYER_ACTION = {
 }
 
 function Tower() {
+	this.human = true;
 	this.index;
 	this.isActive;
 	this.isCharging = false;

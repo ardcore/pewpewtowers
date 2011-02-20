@@ -11,7 +11,8 @@ MenuScene.prototype.init = function(players_count) {
 	if(document.getElementById('pewpewtowers-menu')) {
 		document.getElementById('pewpewtowers-menu').style.display = 'block'
 		var players_count = document.getElementById('pewpewtowers-count'),
-			start_game = document.getElementById('pewpewtowers-start');
+			start_game = document.getElementById('pewpewtowers-start'),
+			start_ai = document.getElementById('pewpewtowers-start-ai');
 		
 		players_count.onchange = function() {
 			players_count.value = (players_count.value > 8) ? 8 : (players_count.value < 2) ? 2 : players_count.value;
@@ -20,6 +21,10 @@ MenuScene.prototype.init = function(players_count) {
 		
 		start_game.onclick = function() {
 			EGameController.shared().changeSceneTo('game_scene');
+		}
+
+		start_ai.onclick = function() {
+			EGameController.shared().changeSceneTo('game_ai_scene');
 		}
 		
 	}
