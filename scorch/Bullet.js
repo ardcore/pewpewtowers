@@ -41,7 +41,6 @@ Bullet.prototype.init = function(pos, angle, v, r) {
 	this.trail.startEffect();
 	
 	return this;
-	
 }
 
 Bullet.prototype.cleanUp = function(){
