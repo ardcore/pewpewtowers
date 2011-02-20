@@ -291,9 +291,9 @@ GameAIScene.prototype.update = function(dt) {
 
 	simb: for (var i = 0; i < this.activePlayer.simbullets.length; i++) {
 
-	var map = EGameController.shared().current_scene.map;
-	var activePlayer = EGameController.shared().current_scene.activePlayer;
-	var players = EGameController.shared().current_scene.players;
+	var map = this.map;
+	var activePlayer = this.activePlayer;
+	var players = this.players;
 
 		var bullet = this.activePlayer.simbullets[i];
 		if (!bullet.active) continue;
@@ -360,7 +360,7 @@ GameAIScene.prototype.update = function(dt) {
 		this.bullets.push(bullet);
 		this.nextPlayer();
 	} else if (!this.activePlayer.human && activeSimBulletsRemaining) {
-		this.activePlayer.updateRifleAngle(dt*3.14);
+		this.activePlayer.updateRifleAngle(Math.sin(dt));
 	}
 
 
