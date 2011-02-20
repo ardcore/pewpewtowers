@@ -9,6 +9,15 @@ var LABELS = {
 	IDLE_TIME = 10;
 
 
+/*
+ * 
+ * Basic asumptions 1px = 1m;
+ * screen_width: 960px = 960m;
+ * screen_height: 480px = 480m;
+ * gravity: 9.87m/s 
+ * muzzle speed: 600m/s
+ */
+
 GameScene.prototype = new EScene().init();
 GameScene.prototype.constructor = GameScene;
 

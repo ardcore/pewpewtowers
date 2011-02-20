@@ -95,7 +95,7 @@ effie.effects = {
 		opacity: '0.4..0.8',
 		longevity: '20..40',
 		falldown: '0.900..0.950',
-		color: "#d6dcde",
+		color: "#e7e9ea",
 		count: 2,
 		reverseVelocityRef: true,
 		callbackAfterDeath: function(obRef) {
