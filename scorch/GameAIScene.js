@@ -359,7 +359,7 @@ GameAIScene.prototype.update = function(dt) {
 		var bullet = this.activePlayer.shotAI();
 		this.bullets.push(bullet);
 		this.nextPlayer();
-		self.playSound('shot.wav', false);		
+		this.playSound('shot.wav', false);		
 	} else if (!this.activePlayer.human && activeSimBulletsRemaining) {
 		this.activePlayer.updateRifleAngle(Math.sin(dt));
 	}
