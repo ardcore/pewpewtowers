@@ -79,7 +79,7 @@ GameScene.prototype.init = function(players_count) {
 	// place players on the map in random positions
 	for (var i = 0; i < players_count; i++) {
 		// create new player at randomized position inside it's placing area 
-		var player = new Tower().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 , y: 0 }, i);
+		var player = new Tower().init({ x: (i * player_pos_step + Math.random() * player_pos_step / 2 + player_pos_step / 4) << 0 , y: 0 }, i);
 		player.pos.y = this.map.findYPosition(player);
 		this.players.push(player);
 		// add label

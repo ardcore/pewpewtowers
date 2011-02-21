@@ -82,7 +82,7 @@ GameAIScene.prototype.init = function(players_count) {
 	var human_count = 1,
 		ai_count = players_count - human_count; // TODO options in menu
 	for (var i = 0; i < human_count; i++) {
-	var humanPlayer = new Tower().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 ,
+	var humanPlayer = new Tower().init({ x: (i * player_pos_step + Math.random() * player_pos_step / 2 + player_pos_step / 4) << 0,
 		y: 0}, 0);
 	humanPlayer.pos.y = this.map.findYPosition(humanPlayer);
 	this.players.push(humanPlayer);
@@ -96,7 +96,7 @@ GameAIScene.prototype.init = function(players_count) {
 
 	for (var i = human_count; i < ai_count+1; i++) {
 		// create new player at randomized position inside it's placing area
-		var player = new TowerAI().init({ x: i * player_pos_step + ~~(Math.random() * player_pos_step / 2) + player_pos_step / 4 ,
+		var player = new TowerAI().init({ x: (i * player_pos_step + Math.random() * player_pos_step / 2 + player_pos_step / 4) << 0,
 			y: 0}, i);
 		player.pos.y = this.map.findYPosition(player);
 		this.players.push(player);
@@ -480,9 +480,16 @@ GameAIScene.prototype.nextPlayer = function(active_died) {
 
 	this.setActivePlayer(next_player);
 
+	var label_text = "";
+	if (next_player.human) {
+		label_text = "Player ";
+	} else {
+		label_text = "AI ";
+	}
+
 	this.labels.push(new Label().init(
 		{x : next_player.pos.x - next_player.size.width, y: next_player.pos.y - next_player.size.height * 3 },
-		 "Player " + (next_player.index + 1) + " go!", 1, "bold 8pt retro",
+		 label_text + (next_player.index + 1) + " go!", 1, "bold 8pt retro",
 		   null, "center", "middle", null
 		));
 
@@ -508,9 +515,16 @@ GameAIScene.prototype.gameFinished = function(player) {
 		   null, "center", "middle", null
 		));
 
+	var label_text = "";
+	if (this.activePlayer.human) {
+		label_text = "Player ";
+	} else {
+		label_text = "AI ";
+	}
+	
 	var el;
 	if(el = document.getElementById('pewpewtowers-game-won')) {
-		el.firstElementChild.innerHTML = "Player " + (this.activePlayer.index + 1) + "<br>be proud!<br>A winner is you!";
+		el.firstElementChild.innerHTML = label_text + (this.activePlayer.index + 1) + "<br>be proud!<br>A winner is you!";
 		el.style.display = 'block';
 		el.onclick = function() {
 			EGameController.shared().changeSceneTo('menu_scene');
